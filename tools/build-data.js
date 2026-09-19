@@ -1,13 +1,12 @@
-// Builds wwwroot/data/blades.json from tools/blades_raw.json (facts extracted from byybladebuilder.com),
-// tools/wiki_meta.json (owner + release date scraped from beyblade.wiki) and the verified combos below.
+// Builds wwwroot/data/blades.json from tools/blades_raw.json (extracted blade facts),
+// tools/blade_meta.json (owner + release date reference data) and the verified combos below.
 // usage: node tools/build-data.js
-// verified stock combos (beyblade.wiki product list and per-blade pages).
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 const root = path.join(__dirname, "..");
 const raw = require("./blades_raw.json");
-const meta = require("./wiki_meta.json"); // scraped { id: { owner, date } } from beyblade.wiki
+const meta = require("./blade_meta.json"); // reference data: { id: { owner, date } }
 const outPath = path.join(root, "wwwroot", "data", "blades.json");
 const imgDir = path.join(root, "wwwroot", "img", "blades");
 
@@ -15,7 +14,7 @@ const imgDir = path.join(root, "wwwroot", "img", "blades");
 const IMAGE_SALT = "beydle-2026";
 const imageFile = (id) => crypto.createHash("sha1").update(IMAGE_SALT + ":" + id).digest("hex").slice(0, 16) + ".webp";
 
-// Owner spellings vary between wiki pages; map every variant to one canonical romanized name.
+// Owner spellings vary across sources; map every variant to one canonical romanized name.
 const OWNER_CANON = {
   "ekusu kurosu": "Jaxon Cross", "ekusu kurusu": "Jaxon Cross", "jaxon kross": "Jaxon Cross", "jaxon cross": "Jaxon Cross",
   "khrome ryugu": "Khrome Ryugu", "chrome ryugu": "Khrome Ryugu",
@@ -27,9 +26,9 @@ const OWNER_CANON = {
   "one kurosu": "One Cross", "two cross": "Two Cross", "five kurosu": "Five Cross", "six cross": "Six Cross",
   "eight kurosu": "Eight Cross", "nine cross": "Nine Cross", "three kurosu four kurosu": "Three & Four Cross",
 };
-// Blades the wiki scrape could not cover: owner (null = no anime owner) and first TT release year.
+// Blades not covered by the reference data: owner (null = no anime owner) and first TT release year.
 const META_OVERRIDES = {
-  // Not on beyblade.wiki; owner and release year from the Beyblade Fandom wiki infoboxes (2026-09-19).
+  // Owner and release year sourced separately (2026-09-19).
   "heavens-ring":   { year: 2026, owner: "Seven Cross" },
   "shelter-drake":  { year: 2025, owner: "Ciel Kaminari" },
   "ptera-swing":    { year: 2024, owner: null },   // only an unnamed Shadow Pro in the anime
@@ -41,7 +40,7 @@ const META_OVERRIDES = {
   "shark-gill":     { year: 2025, owner: null },
   "phoenix-flare":  { year: 2026, owner: "Blaze Fujiwara" },
   "leon-fang":      { year: 2025, owner: "Line Shindo" },
-  // On beyblade.wiki but without an owner field there.
+  // Covered by the reference data but without an owner field.
   "mammoth-tusk":   { year: 2024, owner: null },
   "tyranno-roar":   { year: 2025, owner: "Rex Jura" },
   "viper-tail":     { year: 2023, owner: "Toguro Okunaga" },
@@ -77,7 +76,7 @@ const BITS = {
   G: ["Glide", "Stamina"], RA: ["Rubber Accel", "Attack"], WW: ["Wall Wedge", "Defense"], GU: ["Gear Unite", "Balance"],
 };
 
-// byybladebuilder name -> { display (Takara Tomy) name, code, ratchet, bit abbr, extra aliases }
+// raw blade name -> { display (Takara Tomy) name, code, ratchet, bit abbr, extra aliases }
 // "INT" ratchet = ratchet integrated into blade or bit.
 const COMBOS = {
   "Aero Pegasus":     { code: "UX-00", ratchet: "3-70", bit: "A" },

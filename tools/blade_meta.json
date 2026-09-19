@@ -1,0 +1,291 @@
+{
+ "aero-pegasus": {
+  "owner": "OMEGA SHIROBOSHI",
+  "date": "July 30th, 2024"
+ },
+ "bahamut-blitz": {
+  "owner": "One Kurosu",
+  "date": "March 28th, 2026"
+ },
+ "bear-scratch": {
+  "missing": true
+ },
+ "black-shell": {
+  "owner": "Ciel Kaminari",
+  "date": "July 13th, 2024"
+ },
+ "brachio-whip": {
+  "owner": "Six Cross",
+  "date": "June 13th, 2026"
+ },
+ "bullet-griffon": {
+  "owner": "Two Cross",
+  "date": "April 25th, 2026"
+ },
+ "cerberus-flame": {
+  "owner": "MIRION MIZU",
+  "date": "July 19th, 2025"
+ },
+ "clock-mirage": {
+  "owner": "Eight Kurosu",
+  "date": "October 11th, 2025"
+ },
+ "cobalt-dragoon": {
+  "owner": "Khrome Ryugu",
+  "date": "July 13th, 2024"
+ },
+ "cobalt-drake": {
+  "owner": "CHROME RYUGU",
+  "date": "September 14th, 2023"
+ },
+ "crimson-garuda": {
+  "owner": "Karla Konjiki",
+  "date": "November 2nd, 2024"
+ },
+ "croc-crunch": {
+  "owner": "Jaxon Kross",
+  "date": "February 5th, 2025"
+ },
+ "dran-brave": {
+  "owner": "EKUSU KUROSU",
+  "date": "March 29th, 2025"
+ },
+ "dran-buster": {
+  "owner": "Jaxon Kross",
+  "date": "March 30th, 2024"
+ },
+ "dran-dagger": {
+  "owner": "EKUSU KUROSU",
+  "date": "November 2nd, 2023"
+ },
+ "dran-strike": {
+  "owner": "Jaxon Cross",
+  "date": "May 16th, 2026"
+ },
+ "dran-sword": {
+  "owner": "EKUSU KURUSU",
+  "date": "July 15th, 2023"
+ },
+ "emperor-might": {
+  "owner": "Persona/Multi Nana-iro",
+  "date": "November 1st, 2025"
+ },
+ "fox-brush": {
+  "owner": "YOKO KYUBI",
+  "date": "May 17th, 2025"
+ },
+ "ghost-circle": {
+  "owner": "Reiyu Kuwabara",
+  "date": "December 28th, 2024"
+ },
+ "glory-valkyrie": {
+  "missing": true
+ },
+ "goat-tackle": {
+  "missing": true
+ },
+ "golem-rock": {
+  "owner": "Iwao Gogo",
+  "date": "January 25th, 2025"
+ },
+ "heavens-ring": {
+  "missing": true
+ },
+ "hells-chain": {
+  "owner": "BIRD KAZAMI",
+  "date": "November 2nd, 2023"
+ },
+ "hells-hammer": {
+  "owner": "Robin Kazami",
+  "date": "March 30th, 2024"
+ },
+ "hells-reaper": {
+  "owner": "BIRD KAZAMI",
+  "date": "April 26th, 2025"
+ },
+ "hells-scythe": {
+  "owner": "BIRD KAZAMI",
+  "date": "July 15th, 2023"
+ },
+ "impact-drake": {
+  "owner": "Khrome Ryugu",
+  "date": "December 28th, 2024"
+ },
+ "knight-fortress": {
+  "owner": "Multi Nana-Iro",
+  "date": "March 28th, 2026"
+ },
+ "knight-lance": {
+  "owner": "MULTI NANAIRO",
+  "date": "August 10th, 2023"
+ },
+ "knight-mail": {
+  "owner": "Multi Nana-Iro",
+  "date": "November 2nd, 2024"
+ },
+ "knight-shield": {
+  "owner": "MULTI NANAIRO",
+  "date": "July 15th, 2023"
+ },
+ "leon-claw": {
+  "owner": "KING MANJU",
+  "date": "October 7th, 2023"
+ },
+ "leon-crest": {
+  "owner": "Titus Manju",
+  "date": "August 10th, 2024"
+ },
+ "leon-fang": {
+  "missing": true
+ },
+ "mammoth-tusk": {
+  "owner": null,
+  "date": "December 27th, 2024"
+ },
+ "meteor-dragoon": {
+  "owner": "Khrome Ryugu",
+  "date": "December 27th, 2025"
+ },
+ "mummy-curse": {
+  "owner": "Five Kurosu",
+  "date": "December 27th, 2025"
+ },
+ "pegasus-blast": {
+  "owner": "OMEGA SHIROBOSHI",
+  "date": "July 19th, 2025"
+ },
+ "perseus-dark": {
+  "owner": "RANTZ ROJI",
+  "date": "March 29th, 2025"
+ },
+ "phoenix-feather": {
+  "owner": "BURN FUJIWARA",
+  "date": "January, 2024"
+ },
+ "phoenix-flare": {
+  "missing": true
+ },
+ "phoenix-rudder": {
+  "owner": "Blaze Fujiwara",
+  "date": "August 10th, 2024"
+ },
+ "phoenix-wing": {
+  "owner": "BURN FUJIWARA",
+  "date": "December 10th, 2023"
+ },
+ "ptera-swing": {
+  "missing": true
+ },
+ "ragna-rage": {
+  "owner": "Nine Cross",
+  "date": "March 28th, 2026"
+ },
+ "rhino-horn": {
+  "owner": "CHO PAN",
+  "date": "November 2nd, 2023"
+ },
+ "samurai-calibur": {
+  "owner": "Tenka Shiroboshi",
+  "date": "August 9th, 2025"
+ },
+ "samurai-saber": {
+  "owner": "Tenka Shiroboshi",
+  "date": "November 2nd, 2024"
+ },
+ "samurai-steel": {
+  "owner": "Tenka Shiroboshi",
+  "date": "June 15th, 2025"
+ },
+ "scorpio-spear": {
+  "owner": "DOKUGA FUSHOKU",
+  "date": "April 26th, 2025"
+ },
+ "shark-edge": {
+  "owner": "MEIKO MEIDEN",
+  "date": "September 9th, 2023"
+ },
+ "shark-gill": {
+  "missing": true
+ },
+ "shark-scale": {
+  "owner": "Meiko Myoden",
+  "date": "August 9th, 2025"
+ },
+ "shelter-drake": {
+  "missing": true
+ },
+ "shinobi-knife": {
+  "missing": true
+ },
+ "shinobi-shadow": {
+  "owner": "Quinn Manju",
+  "date": "May 18th, 2024"
+ },
+ "silver-wolf": {
+  "owner": "GINRO",
+  "date": "October 12th, 2024"
+ },
+ "sol-eclipse": {
+  "owner": "Three Kurosu Four Kurosu",
+  "date": "September 27th, 2025"
+ },
+ "sphinx-cowl": {
+  "owner": "ZONAMOS NEKOYAMA",
+  "date": "February 22nd, 2024"
+ },
+ "tricera-press": {
+  "owner": "Ryu Isshin",
+  "date": "June 28th, 2025"
+ },
+ "tyranno-beat": {
+  "owner": "Rex Jura",
+  "date": "April 27th, 2024"
+ },
+ "tyranno-roar": {
+  "owner": null,
+  "date": "August 9th, 2025"
+ },
+ "unicorn-delta": {
+  "missing": true
+ },
+ "unicorn-sting": {
+  "owner": "YUNI NAMBA",
+  "date": "January 27th, 2024"
+ },
+ "viper-tail": {
+  "owner": null,
+  "date": "October 7th, 2023"
+ },
+ "weiss-tiger": {
+  "owner": "Sigrid Nana-iro",
+  "date": "June 15th, 2024"
+ },
+ "whale-wave": {
+  "owner": "Meiko Myoden",
+  "date": "September 14th, 2024"
+ },
+ "wizard-arc": {
+  "owner": "MULTI NANAIRO",
+  "date": "March 29th, 2025"
+ },
+ "wizard-arrow": {
+  "owner": "MULTI NANAIRO",
+  "date": "July 15th, 2023"
+ },
+ "wizard-rod": {
+  "owner": "MULTI NANA-IRO",
+  "date": "March 30th, 2024"
+ },
+ "wolf-hunt": {
+  "owner": "Ginro",
+  "date": "November 1st, 2025"
+ },
+ "wyvern-gale": {
+  "owner": "KADOVAR",
+  "date": "December 27th, 2023"
+ },
+ "wyvern-hover": {
+  "owner": null,
+  "date": "October 24th, 2025"
+ }
+}

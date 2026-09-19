@@ -28,7 +28,7 @@ One-time setup in the GitHub repo: **Settings → Pages → Build and deployment
 
 | Script | Purpose |
 | --- | --- |
-| `node tools/build-data.js` | Rebuilds `wwwroot/data/blades.json` from `tools/blades_raw.json`, `tools/wiki_meta.json` (owner and release date from beyblade.wiki) and the verified stock combos inside the script. Also renames blade images to their hashed file names. |
+| `node tools/build-data.js` | Rebuilds `wwwroot/data/blades.json` from `tools/blades_raw.json` and `tools/blade_meta.json` (owner and release date reference data) plus the verified stock combos inside the script. Also renames blade images to their hashed file names. |
 | `node tools/build-schedule.js` | Extends `wwwroot/data/schedule.json` from tomorrow onwards. Run it after adding a blade so the new blade enters the rotation without changing any day players may already be on. |
 
 ## Data
@@ -45,7 +45,7 @@ One-time setup in the GitHub repo: **Settings → Pages → Build and deployment
 | `bit`, `bitAbbr`, `bitType` | Stock bit, its abbreviation, and its type (used for the yellow "same type" hint) |
 | `image` | Path under `wwwroot` to the blade render. File names are a salted hash of the id so the round-2 picture URL does not reveal the answer |
 | `year` | First Takara Tomy release year |
-| `owner` | Anime character who uses the blade (English dub spelling as on the Beyblade Fandom wiki), or `null` |
+| `owner` | Anime character who uses the blade (English dub spelling), or `null` |
 
 ## How the daily pick works
 
