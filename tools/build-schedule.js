@@ -1,4 +1,4 @@
-// Generates wwwroot/data/schedule.json: a fixed mapping of date -> [round-1 blade id, round-2 blade id].
+// Generates wwwroot/data/schedule.json: a fixed mapping of date -> [hash of round-1 blade id, hash of round-2 blade id].
 // Committing the schedule means adding or removing blades never changes a day that players may already be on.
 //
 // usage: node tools/build-schedule.js            # extend/refresh from tomorrow (Europe/Berlin) onwards, keep today and the past
@@ -7,11 +7,15 @@
 // The generator is a JavaScript port of Services/DailyPicker.cs (Pick / PickImage) and must stay in sync with it.
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 
 const root = path.join(__dirname, "..");
 const blades = require(path.join(root, "wwwroot", "data", "blades.json"));
 const outPath = path.join(root, "wwwroot", "data", "schedule.json");
 const YEARS_AHEAD = 3;
+// Must match Services/ScheduleHash.cs: first 32 hex chars of SHA-256("<salt>|<yyyy-MM-dd>|<blade id>").
+const SALT = "beydle-schedule-2026";
+const hashFor = (dateKey, id) => crypto.createHash("sha256").update(`${SALT}|${dateKey}|${id}`).digest("hex").slice(0, 32);
 const IMAGE_OFFSET = 7919;
 const EPOCH = Date.UTC(2026, 0, 1);
 
@@ -45,7 +49,8 @@ function pickDay(n) {
   const first = pickAt(n);
   let k = n + IMAGE_OFFSET, image;
   do { image = pickAt(k++); } while (image.id === first.id);
-  return [first.id, image.id];
+  const dateKey = key(fromDayNumber(n));
+  return [hashFor(dateKey, first.id), hashFor(dateKey, image.id)];
 }
 
 const todayBerlin = parse(new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Berlin", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date()));
@@ -57,8 +62,9 @@ const schedule = fs.existsSync(outPath) ? JSON.parse(fs.readFileSync(outPath, "u
 const ids = new Set(blades.map((b) => b.id));
 let kept = 0, written = 0;
 for (const [k, v] of Object.entries(schedule)) {
-  if (dayNumber(parse(k)) < startN) { if (v.every((id) => ids.has(id))) kept++; else console.warn("kept day references unknown blade:", k, v); }
-  else delete schedule[k];
+  if (dayNumber(parse(k)) >= startN) { delete schedule[k]; continue; }
+  const known = new Set([...ids].map((id) => hashFor(k, id)));
+  if (v.every((h) => known.has(h))) kept++; else console.warn("kept day does not match any current blade:", k);
 }
 for (let n = startN; n <= endN; n++) { schedule[key(fromDayNumber(n))] = pickDay(n); written++; }
 

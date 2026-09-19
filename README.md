@@ -28,7 +28,7 @@ One-time setup in the GitHub repo: **Settings → Pages → Build and deployment
 
 | Script | Purpose |
 | --- | --- |
-| `node tools/build-data.js` | Rebuilds `wwwroot/data/blades.json` from `tools/blades_raw.json` (facts from byybladebuilder.com), `tools/wiki_meta.json` (owner and release date from beyblade.wiki) and the verified stock combos inside the script. Also renames blade images to their hashed file names. |
+| `node tools/build-data.js` | Rebuilds `wwwroot/data/blades.json` from `tools/blades_raw.json`, `tools/wiki_meta.json` (owner and release date from beyblade.wiki) and the verified stock combos inside the script. Also renames blade images to their hashed file names. |
 | `node tools/build-schedule.js` | Extends `wwwroot/data/schedule.json` from tomorrow onwards. Run it after adding a blade so the new blade enters the rotation without changing any day players may already be on. |
 
 ## Data
@@ -40,19 +40,17 @@ One-time setup in the GitHub repo: **Settings → Pages → Build and deployment
 | `name`, `aliases` | Takara Tomy name, plus Hasbro / alternative names accepted as guesses |
 | `code`, `line` | Product code and line (BX / UX / CX) |
 | `type`, `spin`, `weight` | Blade type, spin direction, blade-only weight in grams |
-| `atk`, `def`, `sta` | 0–100 ratings from byybladebuilder.com |
+| `atk`, `def`, `sta` | 0–100 ratings |
 | `ratchet` | Stock ratchet, or `INT` when the ratchet is integrated into the blade or bit |
 | `bit`, `bitAbbr`, `bitType` | Stock bit, its abbreviation, and its type (used for the yellow "same type" hint) |
 | `image` | Path under `wwwroot` to the blade render. File names are a salted hash of the id so the round-2 picture URL does not reveal the answer |
 | `year` | First Takara Tomy release year |
 | `owner` | Anime character who uses the blade (English dub spelling as on the Beyblade Fandom wiki), or `null` |
 
-Blade facts and the renders in `wwwroot/img/blades` come from byybladebuilder.com; stock combos, release dates and owners come from beyblade.wiki and the Beyblade Fandom wiki. X-Over Project blades (remakes of older-generation Beyblades) are intentionally excluded. To add a blade, append an entry to the JSON file; the daily rotation adapts to the pool size automatically.
-
 ## How the daily pick works
 
-`wwwroot/data/schedule.json` maps every date to its two blade ids and is the source of truth. Days missing from the file fall back to the generator in `DailyPicker`, which is also what `tools/build-schedule.js` uses to fill the file: days are grouped into cycles of `pool size` days, each cycle a seeded shuffle of the whole pool, so every blade appears once per cycle and never on two consecutive days. The round-2 blade reads the same sequence from a fixed offset and skips the day's round-1 blade. There is no server: every visitor reads the same schedule. Because past and current days are kept when the schedule is regenerated, adding blades never changes a day that is already live.
+`wwwroot/data/schedule.json` maps every date to hashes of its two blade ids (`SHA-256(salt|date|id)`, see `ScheduleHash`) and is the source of truth; the app hashes each candidate for the day and takes the match. Days missing from the file fall back to the generator in `DailyPicker`, which is also what `tools/build-schedule.js` uses to fill the file: days are grouped into cycles of `pool size` days, each cycle a seeded shuffle of the whole pool, so every blade appears once per cycle and never on two consecutive days. The round-2 blade reads the same sequence from a fixed offset and skips the day's round-1 blade. There is no server: every visitor reads the same schedule. Because past and current days are kept when the schedule is regenerated, adding blades never changes a day that is already live.
 
 ## Cheating
 
-This is a static site, so the answer is always discoverable by someone who opens the browser developer tools; that is true of every static Wordle clone. What is done: image file names are hashed, all renders are prefetched together when round 2 starts so the network log does not single one out, and the blade id never appears in the page during round 2. Anything stronger needs a small server that holds the day's answers and evaluates guesses.
+This is a static site, so the answer is always discoverable by someone who opens the browser developer tools; that is true of every static Wordle clone. What is done: the schedule stores hashes rather than blade ids, image file names are hashed, all renders are prefetched together when round 2 starts so the network log does not single one out, and the blade id never appears in the page during round 2. No plain-text answer exists in the download; reading one requires reverse-engineering the app. Anything stronger needs a small server that holds the day's answers and evaluates guesses.

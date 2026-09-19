@@ -28,15 +28,20 @@ public static class DailyPicker
 
     /// <summary>
     /// Today's two blades. The committed schedule wins, so catalogue changes never move a published day.
-    /// Days outside the schedule fall back to the generator.
+    /// Schedule entries are <see cref="ScheduleHash"/> values; days outside the schedule fall back to the generator.
     /// </summary>
     public static (Blade First, Blade Image) PickDay(IReadOnlyList<Blade> blades, DateOnly day, IReadOnlyDictionary<string, string[]>? schedule)
     {
-        if (schedule is not null && schedule.TryGetValue(day.ToString("yyyy-MM-dd"), out var ids) && ids.Length == 2)
+        if (schedule is not null && schedule.TryGetValue(day.ToString("yyyy-MM-dd"), out var hashes) && hashes.Length == 2)
         {
-            var first = blades.FirstOrDefault(b => b.Id == ids[0]);
-            var image = blades.FirstOrDefault(b => b.Id == ids[1]);
-            if (first is not null && image is not null && first.Id != image.Id) return (first, image);
+            Blade? first = null, image = null;
+            foreach (var b in blades)
+            {
+                var h = ScheduleHash.For(day, b.Id);
+                if (h == hashes[0]) first = b;
+                else if (h == hashes[1]) image = b;
+            }
+            if (first is not null && image is not null) return (first, image);
         }
         return (Pick(blades, day), PickImage(blades, day));
     }

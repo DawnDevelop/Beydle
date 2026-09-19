@@ -101,10 +101,20 @@ public class DailyPickerTests
     }
 
     [Fact]
+    public void ScheduleHashIsStableAndDiffersPerDayAndBlade()
+    {
+        var d = new DateOnly(2026, 9, 19);
+        Assert.Equal(ScheduleHash.For(d, "dran-sword"), ScheduleHash.For(d, "dran-sword"));
+        Assert.Equal(32, ScheduleHash.For(d, "dran-sword").Length);
+        Assert.NotEqual(ScheduleHash.For(d, "dran-sword"), ScheduleHash.For(d.AddDays(1), "dran-sword"));
+        Assert.NotEqual(ScheduleHash.For(d, "dran-sword"), ScheduleHash.For(d, "dran-buster"));
+    }
+
+    [Fact]
     public void ScheduleOverridesTheGeneratorAndSurvivesCatalogueGrowth()
     {
         var day = new DateOnly(2026, 9, 19);
-        var schedule = new Dictionary<string, string[]> { ["2026-09-19"] = ["b5", "b9"] };
+        var schedule = new Dictionary<string, string[]> { ["2026-09-19"] = [ScheduleHash.For(day, "b5"), ScheduleHash.For(day, "b9")] };
         var (first, image) = DailyPicker.PickDay(Pool, day, schedule);
         Assert.Equal("b5", first.Id);
         Assert.Equal("b9", image.Id);
@@ -122,8 +132,10 @@ public class DailyPickerTests
         var expected = (DailyPicker.Pick(Pool, day), DailyPicker.PickImage(Pool, day));
         Assert.Equal(expected, DailyPicker.PickDay(Pool, day, null));
         Assert.Equal(expected, DailyPicker.PickDay(Pool, day, new Dictionary<string, string[]>()));
-        Assert.Equal(expected, DailyPicker.PickDay(Pool, day, new Dictionary<string, string[]> { ["2026-09-19"] = ["b5", "gone"] }));
-        Assert.Equal(expected, DailyPicker.PickDay(Pool, day, new Dictionary<string, string[]> { ["2026-09-19"] = ["b5", "b5"] }));
+        Assert.Equal(expected, DailyPicker.PickDay(Pool, day, new Dictionary<string, string[]> { ["2026-09-19"] = [ScheduleHash.For(day, "b5"), ScheduleHash.For(day, "gone")] }));
+        Assert.Equal(expected, DailyPicker.PickDay(Pool, day, new Dictionary<string, string[]> { ["2026-09-19"] = [ScheduleHash.For(day, "b5"), ScheduleHash.For(day, "b5")] }));
+        // Plain ids (the old file format) no longer resolve.
+        Assert.Equal(expected, DailyPicker.PickDay(Pool, day, new Dictionary<string, string[]> { ["2026-09-19"] = ["b5", "b9"] }));
     }
 
     [Fact]
@@ -138,8 +150,9 @@ public class DailyPickerTests
         foreach (var (k, v) in schedule.Take(400))
         {
             var day = DateOnly.Parse(k);
-            Assert.Equal(DailyPicker.Pick(blades, day).Id, v[0]);
-            Assert.Equal(DailyPicker.PickImage(blades, day).Id, v[1]);
+            Assert.Equal(ScheduleHash.For(day, DailyPicker.Pick(blades, day).Id), v[0]);
+            Assert.Equal(ScheduleHash.For(day, DailyPicker.PickImage(blades, day).Id), v[1]);
+            Assert.DoesNotContain(blades, b => b.Id == v[0]); // no plain ids in the file
         }
     }
 
