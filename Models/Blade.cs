@@ -18,7 +18,8 @@ public sealed record Blade(
     string BitType,
     string Image,
     int Year,
-    string? Owner)
+    string? Owner,
+    string? Released = null)
 {
     public bool HasIntegratedRatchet => Ratchet == "INT";
     public string RatchetLabel => HasIntegratedRatchet ? "Integrated" : Ratchet;

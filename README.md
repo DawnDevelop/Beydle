@@ -2,7 +2,7 @@
 
 A daily Wordle-style guessing game for Beyblade X blades, built with Blazor WebAssembly and hosted as a static site on GitHub Pages.
 
-One blade is chosen per day (midnight Europe/Berlin). Every guess shows how it compares with the hidden blade across type, spin direction, blade weight, attack / defense / stamina ratings, the stock ratchet and bit, release year and anime owner. Unlimited guesses. Solving it unlocks round 2: a second, different blade shown as a silhouette that sharpens with every wrong guess. Stats and today's guesses are kept in the browser's local storage. A practice mode plays both rounds with random blades without touching the daily stats.
+One blade is chosen per day (midnight Europe/Berlin). Every guess shows how it compares with the hidden blade across type, spin direction, blade weight, attack / defense / stamina ratings, the stock ratchet and bit, release year and anime owner. Unlimited guesses. Solving it unlocks round 2: a second, different blade shown as a silhouette that sharpens with every wrong guess. Stats and today's guesses are kept in the browser's local storage. Twelve hidden achievements (see `Services/Achievements.cs`) pop up Steam-style when found and are listed in the statistics dialog. A practice mode plays both rounds with random blades without touching the daily stats.
 
 ## Run locally
 
@@ -45,6 +45,7 @@ One-time setup in the GitHub repo: **Settings → Pages → Build and deployment
 | `bit`, `bitAbbr`, `bitType` | Stock bit, its abbreviation, and its type (used for the yellow "same type" hint) |
 | `image` | Path under `wwwroot` to the blade render. File names are a salted hash of the id so the round-2 picture URL does not reveal the answer |
 | `year` | First Takara Tomy release year |
+| `released` | Full release date (`yyyy-MM-dd`) when known, otherwise `null`; drives the release-anniversary note |
 | `owner` | Anime character who uses the blade (English dub spelling), or `null` |
 
 ## How the daily pick works

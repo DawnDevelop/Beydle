@@ -17,6 +17,7 @@
   "bitType": "Attack",
   "image": "img/blades/5170a13f90f54b5b.webp",
   "year": 2024,
+  "released": "2024-07-30",
   "owner": "Omega Shiroboshi"
  },
  {
@@ -37,6 +38,7 @@
   "bitType": "Attack",
   "image": "img/blades/907dbe7e2b394625.webp",
   "year": 2026,
+  "released": "2026-03-28",
   "owner": "One Cross"
  },
  {
@@ -59,6 +61,7 @@
   "bitType": "Attack",
   "image": "img/blades/64fd3d0433aa1d94.webp",
   "year": 2024,
+  "released": null,
   "owner": null
  },
  {
@@ -81,6 +84,7 @@
   "bitType": "Defense",
   "image": "img/blades/92cf934eccc093cb.webp",
   "year": 2024,
+  "released": "2024-07-13",
   "owner": "Ciel Kaminari"
  },
  {
@@ -101,6 +105,7 @@
   "bitType": "Stamina",
   "image": "img/blades/ec1a9b0214687337.webp",
   "year": 2026,
+  "released": "2026-06-13",
   "owner": "Six Cross"
  },
  {
@@ -123,6 +128,7 @@
   "bitType": "Defense",
   "image": "img/blades/557e1239ae548a49.webp",
   "year": 2026,
+  "released": "2026-04-25",
   "owner": "Two Cross"
  },
  {
@@ -145,6 +151,7 @@
   "bitType": "Stamina",
   "image": "img/blades/fc42bcbe3f8e94da.webp",
   "year": 2025,
+  "released": "2025-07-19",
   "owner": "Mirion Mizu"
  },
  {
@@ -165,6 +172,7 @@
   "bitType": "Stamina",
   "image": "img/blades/24f36ed638035cf1.webp",
   "year": 2025,
+  "released": "2025-10-11",
   "owner": "Eight Cross"
  },
  {
@@ -185,6 +193,7 @@
   "bitType": "Attack",
   "image": "img/blades/d1482ea8233bc086.webp",
   "year": 2024,
+  "released": "2024-07-13",
   "owner": "Khrome Ryugu"
  },
  {
@@ -205,6 +214,7 @@
   "bitType": "Attack",
   "image": "img/blades/92ba5f6f6652bae2.webp",
   "year": 2023,
+  "released": "2023-09-14",
   "owner": "Khrome Ryugu"
  },
  {
@@ -227,6 +237,7 @@
   "bitType": "Balance",
   "image": "img/blades/69aa2fe40b03a8e8.webp",
   "year": 2024,
+  "released": "2024-11-02",
   "owner": "Karla Konjiki"
  },
  {
@@ -250,6 +261,7 @@
   "bitType": "Attack",
   "image": "img/blades/72bae14031305c71.webp",
   "year": 2025,
+  "released": "2025-02-05",
   "owner": "Jaxon Cross"
  },
  {
@@ -272,6 +284,7 @@
   "bitType": "Attack",
   "image": "img/blades/64e3f9b892ce697f.webp",
   "year": 2025,
+  "released": "2025-03-29",
   "owner": "Jaxon Cross"
  },
  {
@@ -294,6 +307,7 @@
   "bitType": "Attack",
   "image": "img/blades/579f1ad71c0a3df5.webp",
   "year": 2024,
+  "released": "2024-03-30",
   "owner": "Jaxon Cross"
  },
  {
@@ -316,6 +330,7 @@
   "bitType": "Attack",
   "image": "img/blades/e3656ba5abea82d3.webp",
   "year": 2023,
+  "released": "2023-11-02",
   "owner": "Jaxon Cross"
  },
  {
@@ -338,6 +353,7 @@
   "bitType": "Attack",
   "image": "img/blades/f9cc1446dacbd373.webp",
   "year": 2026,
+  "released": "2026-05-16",
   "owner": "Jaxon Cross"
  },
  {
@@ -360,6 +376,7 @@
   "bitType": "Attack",
   "image": "img/blades/074d182281b9b9f2.webp",
   "year": 2023,
+  "released": "2023-07-15",
   "owner": "Jaxon Cross"
  },
  {
@@ -382,6 +399,7 @@
   "bitType": "Defense",
   "image": "img/blades/8fce16d21f7b6ad2.webp",
   "year": 2025,
+  "released": "2025-11-01",
   "owner": "Multi Nana-iro"
  },
  {
@@ -404,6 +422,7 @@
   "bitType": "Attack",
   "image": "img/blades/6d7fbb249464bca3.webp",
   "year": 2025,
+  "released": "2025-05-17",
   "owner": "Yoko Kyubi"
  },
  {
@@ -426,6 +445,7 @@
   "bitType": "Stamina",
   "image": "img/blades/be8b6e32a23bc4c3.webp",
   "year": 2024,
+  "released": "2024-12-28",
   "owner": "Reiyu Kuwabara"
  },
  {
@@ -448,6 +468,7 @@
   "bitType": "Attack",
   "image": "img/blades/ee388192690df500.webp",
   "year": 2026,
+  "released": null,
   "owner": "One Cross"
  },
  {
@@ -470,6 +491,7 @@
   "bitType": "Attack",
   "image": "img/blades/fc210e0faab894dd.webp",
   "year": 2025,
+  "released": null,
   "owner": null
  },
  {
@@ -492,6 +514,7 @@
   "bitType": "Defense",
   "image": "img/blades/04e1cb24addf6506.webp",
   "year": 2025,
+  "released": "2025-01-25",
   "owner": "Iwao Gogo"
  },
  {
@@ -514,6 +537,7 @@
   "bitType": "Defense",
   "image": "img/blades/ef83cf90f1c17c82.webp",
   "year": 2026,
+  "released": null,
   "owner": "Seven Cross"
  },
  {
@@ -536,6 +560,7 @@
   "bitType": "Balance",
   "image": "img/blades/6e00ac405b082731.webp",
   "year": 2023,
+  "released": "2023-11-02",
   "owner": "Bird Kazami"
  },
  {
@@ -558,6 +583,7 @@
   "bitType": "Defense",
   "image": "img/blades/3115c0d2f7e09408.webp",
   "year": 2024,
+  "released": "2024-03-30",
   "owner": "Robin Kazami"
  },
  {
@@ -580,6 +606,7 @@
   "bitType": "Balance",
   "image": "img/blades/c8382c79085a0d20.webp",
   "year": 2025,
+  "released": "2025-04-26",
   "owner": "Bird Kazami"
  },
  {
@@ -602,6 +629,7 @@
   "bitType": "Attack",
   "image": "img/blades/e6efe95842da5446.webp",
   "year": 2023,
+  "released": "2023-07-15",
   "owner": "Bird Kazami"
  },
  {
@@ -622,6 +650,7 @@
   "bitType": "Attack",
   "image": "img/blades/e939593fc3a25028.webp",
   "year": 2024,
+  "released": "2024-12-28",
   "owner": "Khrome Ryugu"
  },
  {
@@ -642,6 +671,7 @@
   "bitType": "Defense",
   "image": "img/blades/5d3a25acf00194ae.webp",
   "year": 2026,
+  "released": "2026-03-28",
   "owner": "Multi Nana-iro"
  },
  {
@@ -664,6 +694,7 @@
   "bitType": "Defense",
   "image": "img/blades/9657bf2457b315ba.webp",
   "year": 2023,
+  "released": "2023-08-10",
   "owner": "Multi Nana-iro"
  },
  {
@@ -686,6 +717,7 @@
   "bitType": "Defense",
   "image": "img/blades/da33230d232993b8.webp",
   "year": 2024,
+  "released": "2024-11-02",
   "owner": "Multi Nana-iro"
  },
  {
@@ -708,6 +740,7 @@
   "bitType": "Defense",
   "image": "img/blades/f5297260c175a378.webp",
   "year": 2023,
+  "released": "2023-07-15",
   "owner": "Multi Nana-iro"
  },
  {
@@ -730,6 +763,7 @@
   "bitType": "Balance",
   "image": "img/blades/e3f648bab014009e.webp",
   "year": 2023,
+  "released": "2023-10-07",
   "owner": "Titus Manju"
  },
  {
@@ -752,6 +786,7 @@
   "bitType": "Defense",
   "image": "img/blades/ed95a6065204925e.webp",
   "year": 2024,
+  "released": "2024-08-10",
   "owner": "Titus Manju"
  },
  {
@@ -774,6 +809,7 @@
   "bitType": "Attack",
   "image": "img/blades/510206067b8bfcc1.webp",
   "year": 2025,
+  "released": null,
   "owner": "Line Shindo"
  },
  {
@@ -796,6 +832,7 @@
   "bitType": "Attack",
   "image": "img/blades/259a42b87e3c174c.webp",
   "year": 2024,
+  "released": null,
   "owner": null
  },
  {
@@ -818,6 +855,7 @@
   "bitType": "Attack",
   "image": "img/blades/1d4ee5cfc036f1d9.webp",
   "year": 2025,
+  "released": "2025-12-27",
   "owner": "Khrome Ryugu"
  },
  {
@@ -838,6 +876,7 @@
   "bitType": "Defense",
   "image": "img/blades/f7a4ddaad6056517.webp",
   "year": 2025,
+  "released": "2025-12-27",
   "owner": "Five Cross"
  },
  {
@@ -860,6 +899,7 @@
   "bitType": "Balance",
   "image": "img/blades/d8ddae0cee1cdc12.webp",
   "year": 2025,
+  "released": "2025-07-19",
   "owner": "Omega Shiroboshi"
  },
  {
@@ -882,6 +922,7 @@
   "bitType": "Defense",
   "image": "img/blades/8ce4bca3691fecd9.webp",
   "year": 2025,
+  "released": "2025-03-29",
   "owner": "Rantz Roji"
  },
  {
@@ -904,6 +945,7 @@
   "bitType": "Attack",
   "image": "img/blades/9a8db9df1c16214e.webp",
   "year": 2024,
+  "released": null,
   "owner": "Blaze Fujiwara"
  },
  {
@@ -924,6 +966,7 @@
   "bitType": "Defense",
   "image": "img/blades/8b89cccfd1cc1afa.webp",
   "year": 2026,
+  "released": null,
   "owner": "Blaze Fujiwara"
  },
  {
@@ -946,6 +989,7 @@
   "bitType": "Stamina",
   "image": "img/blades/1b5a829c32b7769e.webp",
   "year": 2024,
+  "released": "2024-08-10",
   "owner": "Blaze Fujiwara"
  },
  {
@@ -968,6 +1012,7 @@
   "bitType": "Attack",
   "image": "img/blades/70149c4a06a1adbc.webp",
   "year": 2023,
+  "released": "2023-12-10",
   "owner": "Blaze Fujiwara"
  },
  {
@@ -990,6 +1035,7 @@
   "bitType": "Stamina",
   "image": "img/blades/16d54709b7ffafa0.webp",
   "year": 2024,
+  "released": null,
   "owner": null
  },
  {
@@ -1012,6 +1058,7 @@
   "bitType": "Stamina",
   "image": "img/blades/32f369e8ee86b701.webp",
   "year": 2026,
+  "released": "2026-03-28",
   "owner": "Nine Cross"
  },
  {
@@ -1034,6 +1081,7 @@
   "bitType": "Defense",
   "image": "img/blades/e8a1688736f8789a.webp",
   "year": 2023,
+  "released": "2023-11-02",
   "owner": "Cho Pan"
  },
  {
@@ -1056,6 +1104,7 @@
   "bitType": "Attack",
   "image": "img/blades/41d5269c580ef428.webp",
   "year": 2025,
+  "released": "2025-08-09",
   "owner": "Tenka Shiroboshi"
  },
  {
@@ -1078,6 +1127,7 @@
   "bitType": "Attack",
   "image": "img/blades/9ddb952bbe29a339.webp",
   "year": 2024,
+  "released": "2024-11-02",
   "owner": "Tenka Shiroboshi"
  },
  {
@@ -1100,6 +1150,7 @@
   "bitType": "Attack",
   "image": "img/blades/1bb35b01ac11d4fb.webp",
   "year": 2025,
+  "released": "2025-06-15",
   "owner": "Tenka Shiroboshi"
  },
  {
@@ -1122,6 +1173,7 @@
   "bitType": "Attack",
   "image": "img/blades/f6e4940f1b557d3b.webp",
   "year": 2025,
+  "released": "2025-04-26",
   "owner": "Dokuga Fushoku"
  },
  {
@@ -1144,6 +1196,7 @@
   "bitType": "Attack",
   "image": "img/blades/9df8a7bfdc492d1a.webp",
   "year": 2023,
+  "released": "2023-09-09",
   "owner": "Meiko Myoden"
  },
  {
@@ -1166,6 +1219,7 @@
   "bitType": "Stamina",
   "image": "img/blades/db1b7de320b33055.webp",
   "year": 2025,
+  "released": null,
   "owner": null
  },
  {
@@ -1188,6 +1242,7 @@
   "bitType": "Attack",
   "image": "img/blades/6b844851ff1c6c2c.webp",
   "year": 2025,
+  "released": "2025-08-09",
   "owner": "Meiko Myoden"
  },
  {
@@ -1208,6 +1263,7 @@
   "bitType": "Balance",
   "image": "img/blades/4019bb520e81f00c.webp",
   "year": 2025,
+  "released": null,
   "owner": "Ciel Kaminari"
  },
  {
@@ -1230,6 +1286,7 @@
   "bitType": "Attack",
   "image": "img/blades/5012ae7201518030.webp",
   "year": 2024,
+  "released": null,
   "owner": "Sheer Kamikage"
  },
  {
@@ -1252,6 +1309,7 @@
   "bitType": "Defense",
   "image": "img/blades/2f7999f35f0034ff.webp",
   "year": 2024,
+  "released": "2024-05-18",
   "owner": "Quinn Manju"
  },
  {
@@ -1274,6 +1332,7 @@
   "bitType": "Stamina",
   "image": "img/blades/1f38fea8e68e4fe1.webp",
   "year": 2024,
+  "released": "2024-10-12",
   "owner": "Ginro"
  },
  {
@@ -1294,6 +1353,7 @@
   "bitType": "Balance",
   "image": "img/blades/b5d5225a377c7e2b.webp",
   "year": 2025,
+  "released": "2025-09-27",
   "owner": "Three & Four Cross"
  },
  {
@@ -1317,6 +1377,7 @@
   "bitType": "Defense",
   "image": "img/blades/f2f36ada799b8f7d.webp",
   "year": 2024,
+  "released": "2024-02-22",
   "owner": "Zonamos Nekoyama"
  },
  {
@@ -1339,6 +1400,7 @@
   "bitType": "Defense",
   "image": "img/blades/7a14cd3f0c50c24a.webp",
   "year": 2025,
+  "released": "2025-06-28",
   "owner": "Ryu Isshin"
  },
  {
@@ -1361,6 +1423,7 @@
   "bitType": "Attack",
   "image": "img/blades/f4db8a802de13225.webp",
   "year": 2024,
+  "released": "2024-04-27",
   "owner": "Rex Jura"
  },
  {
@@ -1383,6 +1446,7 @@
   "bitType": "Attack",
   "image": "img/blades/c06eaa4eea082a82.webp",
   "year": 2025,
+  "released": null,
   "owner": "Rex Jura"
  },
  {
@@ -1405,6 +1469,7 @@
   "bitType": "Balance",
   "image": "img/blades/aafe3a48a88067e3.webp",
   "year": 2026,
+  "released": null,
   "owner": "Kiwami Miyazukae"
  },
  {
@@ -1427,6 +1492,7 @@
   "bitType": "Balance",
   "image": "img/blades/ab5cfe3e294e6849.webp",
   "year": 2024,
+  "released": "2024-01-27",
   "owner": "Yuni Namba"
  },
  {
@@ -1449,6 +1515,7 @@
   "bitType": "Stamina",
   "image": "img/blades/f68dbe037463c5df.webp",
   "year": 2023,
+  "released": null,
   "owner": "Toguro Okunaga"
  },
  {
@@ -1471,6 +1538,7 @@
   "bitType": "Balance",
   "image": "img/blades/6042e8d858975a1c.webp",
   "year": 2024,
+  "released": "2024-06-15",
   "owner": "Sigrid Nana-iro"
  },
  {
@@ -1493,6 +1561,7 @@
   "bitType": "Attack",
   "image": "img/blades/448ee7dc9ddd4f2e.webp",
   "year": 2024,
+  "released": "2024-09-14",
   "owner": "Meiko Myoden"
  },
  {
@@ -1515,6 +1584,7 @@
   "bitType": "Stamina",
   "image": "img/blades/6da57d8f18e2cd75.webp",
   "year": 2025,
+  "released": "2025-03-29",
   "owner": "Multi Nana-iro"
  },
  {
@@ -1537,6 +1607,7 @@
   "bitType": "Stamina",
   "image": "img/blades/b1441d1e06986b22.webp",
   "year": 2023,
+  "released": "2023-07-15",
   "owner": "Multi Nana-iro"
  },
  {
@@ -1559,6 +1630,7 @@
   "bitType": "Stamina",
   "image": "img/blades/fda8a70d6daa5225.webp",
   "year": 2024,
+  "released": "2024-03-30",
   "owner": "Multi Nana-iro"
  },
  {
@@ -1579,6 +1651,7 @@
   "bitType": "Stamina",
   "image": "img/blades/2c2ed8e53aebb4ef.webp",
   "year": 2025,
+  "released": "2025-11-01",
   "owner": "Ginro"
  },
  {
@@ -1601,6 +1674,7 @@
   "bitType": "Stamina",
   "image": "img/blades/010082c59287760d.webp",
   "year": 2023,
+  "released": "2023-12-27",
   "owner": "Kadovar"
  },
  {
@@ -1623,6 +1697,7 @@
   "bitType": "Defense",
   "image": "img/blades/6aac01da390a1688.webp",
   "year": 2025,
+  "released": null,
   "owner": null
  }
 ]

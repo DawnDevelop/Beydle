@@ -159,6 +159,16 @@ const COMBOS = {
 // Entries still awaiting verification are listed here and skipped until filled.
 const PENDING = new Set([]);
 
+// "July 30th, 2024" -> "2024-07-30"; null when only the year is known.
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const isoDate = (text) => {
+  const m = text?.match(/^(\w+) (\d{1,2})(?:st|nd|rd|th), (\d{4})$/);
+  if (!m) return null;
+  const month = MONTHS.indexOf(m[1]) + 1;
+  if (!month) throw new Error("unknown month in " + text);
+  return `${m[3]}-${String(month).padStart(2, "0")}-${m[2].padStart(2, "0")}`;
+};
+
 const spaced = (s) => s ? s.replace(/([a-z])([A-Z])/g, "$1 $2") : null;
 const out = [];
 const skipped = [];
@@ -172,6 +182,7 @@ for (const b of raw) {
   const id = display.toLowerCase().replace(/[^a-z0-9]+/g, "-");
   const m = META_OVERRIDES[id] ?? meta[id] ?? {};
   const year = m.year ?? (m.date ? Number(m.date.match(/\d{4}/)[0]) : null);
+  const released = isoDate(m.date);
   const owner = "owner" in (META_OVERRIDES[id] ?? {}) ? META_OVERRIDES[id].owner : canonOwner(m.owner);
   if (!year) throw new Error("no release year for " + display);
   const aliases = new Set([b.name, spaced(b.tt), spaced(b.hasbro), ...(c.aliases || [])].filter(Boolean));
@@ -192,6 +203,7 @@ for (const b of raw) {
     bitType: bit[1],
     image: `img/blades/${imageFile(id)}`,
     year,
+    released,
     owner,
   });
 }

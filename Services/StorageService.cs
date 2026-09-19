@@ -9,6 +9,10 @@ public sealed class SavedState
     public List<string> Guesses { get; set; } = [];
     public List<string> ImageGuesses { get; set; } = [];
     public Stats Stats { get; set; } = new();
+    /// <summary>Achievement id to the day (yyyy-MM-dd) it was unlocked.</summary>
+    public Dictionary<string, string> Achievements { get; set; } = [];
+    /// <summary>Every blade id ever guessed in daily mode, for the Encyclopedia achievement.</summary>
+    public HashSet<string> Seen { get; set; } = [];
 }
 
 public sealed class Stats
@@ -52,6 +56,8 @@ public sealed class StorageService(IJSRuntime js)
             state.ImageGuesses ??= [];
             state.Stats ??= new Stats();
             state.Stats.Distribution ??= [];
+            state.Achievements ??= [];
+            state.Seen ??= [];
             return state;
         }
         catch (JsonException)

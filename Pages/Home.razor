@@ -65,20 +65,37 @@ else
     @if (roundOneShown)
     {
         var answer = game.Blade.Answer;
+        var xtreme = game.Blade.Guesses.Count == 1;
+        var anniversary = Achievements.AnniversaryYears(answer, today);
         @if (!game.Image.Won)
         {
-            <section class="round-strip card" aria-label="Round 1 result">
+            <section class="round-strip card @(xtreme ? "xtreme" : "")" aria-label="Round 1 result">
                 <img class="strip-img" src="@answer.Image" alt="" />
                 <div class="strip-text">
-                    <span class="strip-title">Round 1 cleared in @game.Blade.Guesses.Count @(game.Blade.Guesses.Count == 1 ? "guess" : "guesses")</span>
+                    <span class="strip-title">@(xtreme ? "⚡ Xtreme Finish! Round 1 cleared in one guess" : $"Round 1 cleared in {game.Blade.Guesses.Count} guesses")</span>
                     <span class="strip-sub"><span class="badge line-@answer.Line.ToLower()">@answer.Code</span> @answer.Name @(answer.HasIntegratedRatchet ? "" : answer.Ratchet)@answer.BitAbbr</span>
+                    @if (anniversary is int y)
+                    {
+                        <span class="anniversary">🎂 Released exactly @y @(y == 1 ? "year" : "years") ago today</span>
+                    }
                 </div>
             </section>
         }
         else
         {
-            <section class="result card compact" aria-label="Round 1 result">
-                <p class="result-title">Round 1 cleared in <strong>@game.Blade.Guesses.Count</strong> @(game.Blade.Guesses.Count == 1 ? "guess" : "guesses")!</p>
+            <section class="result card compact @(xtreme ? "xtreme" : "")" aria-label="Round 1 result">
+                @if (xtreme)
+                {
+                    <p class="result-title"><strong>⚡ Xtreme Finish!</strong> Round 1 cleared in one guess!</p>
+                }
+                else
+                {
+                    <p class="result-title">Round 1 cleared in <strong>@game.Blade.Guesses.Count</strong> guesses!</p>
+                }
+                @if (anniversary is int y)
+                {
+                    <p class="anniversary">🎂 Released exactly @y @(y == 1 ? "year" : "years") ago today</p>
+                }
                 <div class="reveal">
                     <img class="reveal-full" src="@answer.Image" alt="" />
                     <div class="reveal-head">
@@ -204,6 +221,10 @@ else
             {
                 <p class="hint-text">…</p>
             }
+            else if (eggReply is not null)
+            {
+                <p class="hint-text egg" aria-live="polite">@eggReply</p>
+            }
             else if (roundOneShown)
             {
                 @if (game.Image.Guesses.Count > 0)
@@ -321,9 +342,38 @@ else
                     </div>
                 }
                 <p class="muted">Daily mode only. A day counts as played once you make a guess. Practice rounds are not counted.</p>
+                <h3>Achievements · @state.Achievements.Count / @Achievements.All.Count</h3>
+                <ul class="achievements">
+                    @foreach (var a in Achievements.All)
+                    {
+                        var unlocked = state.Achievements.TryGetValue(a.Id, out var when);
+                        <li class="ach @(unlocked ? "unlocked" : "locked")">
+                            <span class="ach-icon" aria-hidden="true">@(unlocked ? a.Icon : "🔒")</span>
+                            <span class="ach-text">
+                                <span class="ach-title">@a.Title</span>
+                                <span class="ach-desc">@(unlocked ? a.Description : "Hidden until unlocked.")</span>
+                            </span>
+                            @if (unlocked)
+                            {
+                                <span class="ach-date">@when</span>
+                            }
+                        </li>
+                    }
+                </ul>
             }
             <button class="btn" @ref="dialogCloseRef" @onclick="CloseDialog">@(dialog == Dialog.Help ? "Got it" : "Close")</button>
         </div>
+    </div>
+}
+
+@if (toast is not null)
+{
+    <div class="toast" role="status" aria-live="polite" @key="toast.Id">
+        <span class="toast-icon" aria-hidden="true">@toast.Icon</span>
+        <span class="toast-text">
+            <span class="toast-kicker">Achievement unlocked</span>
+            <span class="toast-title">@toast.Title</span>
+        </span>
     </div>
 }
 
@@ -360,6 +410,14 @@ else
     private ElementReference dialogRef;
     private ElementReference dialogCloseRef;
     private bool copied;
+    /// <summary>Reply to a typed battle call; shown in place of the hint while the text stays in the box.</summary>
+    private string? eggReply;
+    private Achievement? toast;
+    private readonly Queue<Achievement> toastQueue = new();
+    /// <summary>Practice games finished since the page loaded, for Grinder.</summary>
+    private int practiceRoundsDone;
+    /// <summary>Matches the .toast animation length in app.css.</summary>
+    private const int ToastMs = 5400;
     private string countdown = "";
     private System.Threading.Timer? timer;
 
@@ -423,6 +481,7 @@ else
             state.ImageGuesses = [];
         }
         daily.Restore(pool, state.Guesses, state.ImageGuesses);
+        if (daily.Blade.Guesses.Count > 0) _ = CheckDailyAchievementsAsync();
         UpdateCountdown();
     }
 
@@ -448,6 +507,7 @@ else
     {
         query = "";
         suggestions = [];
+        eggReply = null;
         copied = false;
         revealing = false;
         focusPending = true;
@@ -471,10 +531,12 @@ else
         countdown = $"{(int)t.TotalHours:00}:{t.Minutes:00}:{t.Seconds:00}";
     }
 
-    private void OnInput(ChangeEventArgs e)
+    private async Task OnInput(ChangeEventArgs e)
     {
         query = e.Value?.ToString() ?? "";
         UpdateSuggestions(query);
+        eggReply = suggestions.Count == 0 ? Achievements.Reply(query) : null;
+        if (eggReply is not null) await UnlockAsync(Achievements.LetItRip);
     }
 
     private void UpdateSuggestions(string q)
@@ -525,17 +587,25 @@ else
         var g = game;
         query = "";
         suggestions = [];
+        eggReply = null;
 
         var inImageRound = g.InImageRound;
         if (!g.Submit(blade)) return;
-        if (!inImageRound && g.Blade.Won)
+        var justWonRoundOne = !inImageRound && g.Blade.Won;
+        if (justWonRoundOne)
         {
             revealing = true;
             _ = FinishRevealLater(g);
         }
+        if (inImageRound && blade.Id == g.Blade.Answer.Id) eggReply = "That one was round 1. Look at the picture.";
 
-        if (!practiceMode)
+        if (practiceMode)
         {
+            if (g.Complete && ++practiceRoundsDone >= Achievements.GrinderRounds) await UnlockAsync(Achievements.Grinder);
+        }
+        else
+        {
+            state.Seen.Add(blade.Id);
             if (inImageRound)
             {
                 state.ImageGuesses.Add(blade.Id);
@@ -547,6 +617,8 @@ else
                 if (g.Blade.Won) StatsTracker.RecordWin(state.Stats, today, g.Blade.Guesses.Count);
             }
             await Storage.SaveAsync(state);
+            // A round-1 win waits for the cards to flip (see FinishRevealLater) so the toast does not spoil it.
+            if (!justWonRoundOne) await CheckDailyAchievementsAsync();
         }
         if (!g.Complete) focusPending = true;
     }
@@ -554,10 +626,39 @@ else
     private async Task FinishRevealLater(GameSession forGame)
     {
         await Task.Delay(RevealMs);
+        if (ReferenceEquals(forGame, daily)) await CheckDailyAchievementsAsync();
         if (!ReferenceEquals(game, forGame)) return; // player switched mode; ResetInput already cleared the flag
         revealing = false;
         focusPending = true;
         StateHasChanged();
+    }
+
+    /// <summary>Daily mode only, so practice rounds cannot farm these. Unlocking is idempotent.</summary>
+    private async Task CheckDailyAchievementsAsync()
+    {
+        foreach (var a in Achievements.Earned(daily, state.Stats, pool, state.Seen).ToList())
+            await UnlockAsync(a);
+    }
+
+    private async Task UnlockAsync(Achievement a)
+    {
+        if (!state.Achievements.TryAdd(a.Id, today.ToString("yyyy-MM-dd"))) return;
+        await Storage.SaveAsync(state);
+        toastQueue.Enqueue(a);
+        if (toast is null) _ = ShowToastsAsync();
+    }
+
+    private async Task ShowToastsAsync()
+    {
+        while (toastQueue.TryDequeue(out var next))
+        {
+            toast = next;
+            StateHasChanged();
+            await Task.Delay(ToastMs);
+            toast = null;
+            StateHasChanged();
+            await Task.Delay(300);
+        }
     }
 
     private static int DistOrder(string key) => key == "7+" ? 7 : int.Parse(key);

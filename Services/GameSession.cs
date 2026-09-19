@@ -77,7 +77,8 @@ public sealed class GameSession(Blade bladeAnswer, Blade imageAnswer)
 
     public string ShareText(string title, string url)
     {
-        var lines = new List<string> { $"{title} – Blade {Blade.Guesses.Count}/∞ · Image {Image.Guesses.Count}/∞" };
+        var xtreme = Blade.Guesses.Count == 1 ? " ⚡" : "";
+        var lines = new List<string> { $"{title} – Blade {Blade.Guesses.Count}/∞ · Image {Image.Guesses.Count}/∞{xtreme}" };
         lines.AddRange(Blade.Guesses.Select(g => string.Concat(g.Cells.Select(c => c.Emoji))));
         lines.Add("🖼 " + string.Concat(Image.Guesses.Select(b => b.Id == Image.Answer.Id ? "🟩" : "⬛")));
         lines.Add(url);
