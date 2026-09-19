@@ -98,9 +98,11 @@ else
                 var stage = game.Image.Stage;
                 <h2 class="round-title">Round 2 · Which blade is this?</h2>
                 <div class="reveal-frame">
-                    <img class="reveal-img stage-@stage" src="@game.Image.Answer.Image" alt="Hidden blade, obscured" />
+                    <div class="reveal-shape" style="--blade-mask: url('@Nav.ToAbsoluteUri(game.Image.Answer.Image)')">
+                        <img class="reveal-img stage-@stage" src="@game.Image.Answer.Image" alt="Hidden blade, obscured" />
+                    </div>
                 </div>
-                <p class="reveal-note" aria-live="polite">@(stage < 3 ? "Silhouette only. Each wrong guess sharpens the picture a little." : stage >= ImageRound.MaxStage ? "As clear as it gets." : "A little sharper.")</p>
+                <p class="reveal-note" aria-live="polite">@(stage < 2 ? "Silhouette only. Each wrong guess sharpens the picture a little." : stage >= ImageRound.MaxStage ? "As clear as it gets." : "A little sharper.")</p>
                 @* Fetch every render at once so the network log does not single out the answer. *@
                 <div class="prefetch" aria-hidden="true">
                     @foreach (var b in pool)
@@ -276,7 +278,7 @@ else
                     <li><span class="swatch miss"></span><span><strong>Grey</strong> – no match.</span></li>
                     <li><span class="swatch arrow-demo">▲</span><span>Arrows on numbers show whether the answer is <strong>higher</strong> or <strong>lower</strong>.</span></li>
                 </ul>
-                <p><strong>Round 2.</strong> Once round 1 is solved, a second, different blade appears as a silhouette. Name it. The silhouette gets a little clearer with each wrong guess, and colour starts to show after three misses.</p>
+                <p><strong>Round 2.</strong> Once round 1 is solved, a second, different blade appears as a silhouette. Name it. The silhouette gets a little clearer with each wrong guess, colour shows after two misses, and the picture is at its sharpest after seven.</p>
                 <p class="muted">Weight is the blade alone. ATK / DEF / STA are the 0–100 ratings from byybladebuilder.com. Ratchet and bit are the stock combo the blade first shipped with. Year is the first Takara Tomy release. Owner is the anime character who uses the blade.</p>
                 <p class="muted"><strong>Practice</strong> mode plays both rounds with random blades as often as you like and does not count toward your stats.</p>
             }

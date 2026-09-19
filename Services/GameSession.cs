@@ -21,7 +21,7 @@ public sealed class BladeRound(Blade answer)
 /// <summary>Round 2: name the blade in a picture that sharpens with every miss.</summary>
 public sealed class ImageRound(Blade answer)
 {
-    public const int MaxStage = 10;
+    public const int MaxStage = 7;
 
     public Blade Answer { get; } = answer;
     public List<Blade> Guesses { get; } = [];
