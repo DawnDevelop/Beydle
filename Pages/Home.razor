@@ -8,7 +8,14 @@
 
 <header class="topbar">
     <div class="brand">
-        <span class="brand-mark" aria-hidden="true">✕</span>
+        <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22">
+                <path d="M12,12 C9.3,10.2 7.7,6.8 12,3 C16.3,6.8 14.7,10.2 12,12 Z" fill="#fff" transform="rotate(0 12 12)" />
+                <path d="M12,12 C9.3,10.2 7.7,6.8 12,3 C16.3,6.8 14.7,10.2 12,12 Z" fill="#fff" transform="rotate(120 12 12)" />
+                <path d="M12,12 C9.3,10.2 7.7,6.8 12,3 C16.3,6.8 14.7,10.2 12,12 Z" fill="#fff" transform="rotate(240 12 12)" />
+                <circle cx="12" cy="12" r="1.6" fill="#fff" />
+            </svg>
+        </span>
         <h1>Beydle</h1>
     </div>
     <div class="topbar-actions">
@@ -40,6 +47,11 @@ else
             <p class="meta">Blade #@dayNumber · @today.ToString("d MMM yyyy") · @pool.Count blades in the pool</p>
         }
     </section>
+
+    @if (debugDayOverride is not null)
+    {
+        <p class="debug-badge">🐞 DEBUG: viewing @today.ToString("yyyy-MM-dd") &mdash; drop <code>?day=</code> from the URL to go back to today</p>
+    }
 
     <ol class="rounds" aria-label="Rounds">
         <li class="round-pill @(roundOneShown ? "done" : "active")" aria-current="@(!roundOneShown ? "step" : null)">1 · Blade</li>
@@ -348,12 +360,27 @@ else
     private string countdown = "";
     private System.Threading.Timer? timer;
 
+    // Debug-only date override: append ?day=yyyy-MM-dd to the URL to preview a specific day's puzzle.
+    // The query-string plumbing below is compiled out of Release builds, so it does not exist in the
+    // published site and cannot be triggered there. debugDayOverride stays null in Release, which is
+    // all StartDay/Tick/the markup need to know to behave exactly as before.
+#if DEBUG
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "day")]
+    public string? DebugDayQuery { get; set; }
+#endif
+    private DateOnly? debugDayOverride = null;
+    private DateOnly CurrentDay() => debugDayOverride ?? DailyPicker.Today();
+
     protected override async Task OnInitializedAsync()
     {
         all = await Blades.GetAllAsync();
         pool = all;
         schedule = await Blades.GetScheduleAsync();
         state = await Storage.LoadAsync();
+#if DEBUG
+        if (DateOnly.TryParse(DebugDayQuery, out var parsedDebugDay)) debugDayOverride = parsedDebugDay;
+#endif
         StartDay();
         NewPractice();
         timer = new System.Threading.Timer(_ => InvokeAsync(Tick), null, 0, 1000);
@@ -379,7 +406,7 @@ else
 
     private void StartDay()
     {
-        today = DailyPicker.Today();
+        today = CurrentDay();
         dayNumber = DailyPicker.DayNumber(today);
         var (first, image) = DailyPicker.PickDay(pool, today, schedule);
         daily = new GameSession(first, image);
@@ -427,7 +454,7 @@ else
     {
         var before = today;
         UpdateCountdown();
-        if (DailyPicker.Today() != before)
+        if (CurrentDay() != before)
         {
             StartDay();
             ResetInput();

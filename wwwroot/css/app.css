@@ -87,6 +87,14 @@ button { font: inherit; cursor: pointer; }
     font-weight: 800; font-size: 22px; color: #fff;
     box-shadow: 0 8px 24px rgba(91, 140, 255, .35);
 }
+.brand-mark svg {
+    animation: brand-spin 9s linear infinite;
+    transform-origin: 50% 50%;
+}
+@keyframes brand-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+    .brand-mark svg { animation: none; }
+}
 .brand h1 {
     margin: 0;
     font-size: 28px; font-weight: 800; letter-spacing: -.02em;
@@ -212,6 +220,16 @@ button { font: inherit; cursor: pointer; }
 .intro { text-align: center; margin-bottom: 20px; }
 .tagline { margin: 0 0 6px; font-size: 18px; }
 .meta { margin: 0; color: var(--muted); font-size: 14px; }
+.debug-badge {
+    max-width: 560px; margin: -8px auto 20px;
+    padding: 8px 14px;
+    text-align: center; font-size: 13px;
+    color: #ffd166;
+    background: rgba(255, 209, 102, .12);
+    border: 1px dashed rgba(255, 209, 102, .5);
+    border-radius: 10px;
+}
+.debug-badge code { font-family: var(--mono); }
 
 /* ---------- search ---------- */
 .guess-box { max-width: 560px; margin: 0 auto 24px; }
