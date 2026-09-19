@@ -368,15 +368,15 @@ button { font: inherit; cursor: pointer; }
     animation: card-turn 1.55s both;
     animation-delay: var(--turn-delay);
 }
-.row .flip-card:nth-child(3) { --turn-delay: .28s; }
-.row .flip-card:nth-child(4) { --turn-delay: .56s; }
-.row .flip-card:nth-child(5) { --turn-delay: .84s; }
-.row .flip-card:nth-child(6) { --turn-delay: 1.12s; }
-.row .flip-card:nth-child(7) { --turn-delay: 1.4s; }
-.row .flip-card:nth-child(8) { --turn-delay: 1.68s; }
-.row .flip-card:nth-child(9) { --turn-delay: 1.96s; }
-.row .flip-card:nth-child(10) { --turn-delay: 2.24s; }
-.row .flip-card:nth-child(11) { --turn-delay: 2.52s; }
+.row .flip-card:nth-child(3) { --turn-delay: .25s; }
+.row .flip-card:nth-child(4) { --turn-delay: .53s; }
+.row .flip-card:nth-child(5) { --turn-delay: .81s; }
+.row .flip-card:nth-child(6) { --turn-delay: 1.09s; }
+.row .flip-card:nth-child(7) { --turn-delay: 1.37s; }
+.row .flip-card:nth-child(8) { --turn-delay: 1.65s; }
+.row .flip-card:nth-child(9) { --turn-delay: 1.93s; }
+.row .flip-card:nth-child(10) { --turn-delay: 2.21s; }
+.row .flip-card:nth-child(11) { --turn-delay: 2.49s; }
 @keyframes card-turn {
     0%   { transform: translateY(0) rotateX(0deg); animation-timing-function: cubic-bezier(.22, .7, .3, 1); }
     18%  { transform: translateY(-3px) translateZ(10px) rotateX(8deg); animation-timing-function: cubic-bezier(.42, 0, .22, 1); }
