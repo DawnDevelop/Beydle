@@ -113,14 +113,17 @@ public class StatsTrackerTests
         StatsTracker.RecordFirstGuess(s, "2026-09-19");
         Assert.Equal(1, s.Played);
         Assert.Equal(0, s.Won);
-        Assert.Equal(0, StatsTracker.WinRatePercent(s));
+        Assert.Equal(0, StatsTracker.AverageGuesses(s));
 
         StatsTracker.RecordFirstGuess(s, "2026-09-20");
         StatsTracker.RecordWin(s, new DateOnly(2026, 9, 20), 3);
         Assert.Equal(2, s.Played);
         Assert.Equal(1, s.Won);
-        Assert.Equal(50, StatsTracker.WinRatePercent(s));
+        Assert.Equal(3.0, StatsTracker.AverageGuesses(s));
         Assert.Equal(1, s.Distribution["3"]);
+
+        StatsTracker.RecordWin(s, new DateOnly(2026, 9, 21), 6);
+        Assert.Equal(4.5, StatsTracker.AverageGuesses(s));
     }
 
     [Fact]

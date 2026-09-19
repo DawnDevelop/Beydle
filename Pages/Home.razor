@@ -18,6 +18,10 @@
         <h1>Beydle</h1>
     </div>
     <div class="topbar-actions">
+        @if (all is not null && StatsTracker.CurrentStreak(stats, today) is var streak && streak > 0)
+        {
+            <span class="streak-badge" title="@streak-day streak" aria-label="@streak-day streak">🔥 @streak</span>
+        }
         <button class="icon-btn" title="How to play" aria-label="How to play" @onclick="() => OpenDialog(Dialog.Help)">?</button>
         <button class="icon-btn" title="Statistics" aria-label="Statistics" @onclick="() => OpenDialog(Dialog.Stats)">▥</button>
     </div>
@@ -298,8 +302,8 @@ else
                 <h2 id="dialog-title">Statistics</h2>
                 <div class="stats-grid">
                     <div><b>@stats.Played</b><span>Played</span></div>
-                    <div><b>@StatsTracker.WinRatePercent(stats)%</b><span>Win rate</span></div>
-                    <div><b>@StatsTracker.CurrentStreak(stats, today)</b><span>Streak</span></div>
+                    <div><b>@(stats.Won == 0 ? "–" : StatsTracker.AverageGuesses(stats).ToString("0.0"))</b><span>Avg guesses</span></div>
+                    <div><b>🔥 @StatsTracker.CurrentStreak(stats, today)</b><span>Streak</span></div>
                     <div><b>@stats.MaxStreak</b><span>Best streak</span></div>
                 </div>
                 @if (stats.Distribution.Count > 0)

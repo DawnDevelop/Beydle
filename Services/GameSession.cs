@@ -104,6 +104,7 @@ public static class StatsTracker
         s.MaxStreak = Math.Max(s.MaxStreak, s.Streak);
         s.LastWinDay = key;
         s.Won++;
+        s.TotalWinGuesses += guessCount;
         var bucket = guessCount <= 6 ? guessCount.ToString() : "7+";
         s.Distribution[bucket] = s.Distribution.GetValueOrDefault(bucket) + 1;
     }
@@ -117,5 +118,6 @@ public static class StatsTracker
         return s.LastWinDay == key || s.LastWinDay == yesterday ? s.Streak : 0;
     }
 
-    public static int WinRatePercent(Stats s) => s.Played == 0 ? 0 : (int)Math.Round(100.0 * s.Won / s.Played);
+    /// <summary>Mean round-1 guesses per solved day, one decimal; 0 before the first win.</summary>
+    public static double AverageGuesses(Stats s) => s.Won == 0 ? 0 : Math.Round((double)s.TotalWinGuesses / s.Won, 1);
 }

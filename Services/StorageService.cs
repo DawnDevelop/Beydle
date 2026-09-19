@@ -15,6 +15,7 @@ public sealed class Stats
 {
     public int Played { get; set; }
     public int Won { get; set; }
+    public int TotalWinGuesses { get; set; }
     public int Streak { get; set; }
     public int MaxStreak { get; set; }
     public string? LastPlayedDay { get; set; }
