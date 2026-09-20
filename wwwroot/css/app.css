@@ -292,10 +292,10 @@ button { font: inherit; cursor: pointer; }
 .board-scroll { overflow-x: auto; padding-bottom: 8px; }
 .row {
     display: grid;
-    grid-template-columns: minmax(150px, 1.7fr) repeat(10, minmax(78px, 1fr));
+    grid-template-columns: minmax(150px, 1.7fr) repeat(8, minmax(78px, 1fr));
     gap: 6px;
     margin-bottom: 6px;
-    min-width: 1040px;
+    min-width: 870px;
 }
 .row.head .cell {
     background: transparent;

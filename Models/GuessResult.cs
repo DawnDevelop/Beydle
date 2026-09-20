@@ -12,7 +12,7 @@ public sealed record Cell(string Label, string Value, Hit Hit, Direction Directi
 
 public sealed record GuessResult(Blade Guess, Cell[] Cells, bool IsCorrect)
 {
-    public static readonly string[] Labels = ["Type", "Spin", "Weight", "ATK", "DEF", "STA", "Ratchet", "Bit", "Year", "Owner"];
+    public static readonly string[] Labels = ["Type", "Spin", "Weight", "Line", "Ratchet", "Bit", "Year", "Owner"];
 
     public static GuessResult Compare(Blade guess, Blade answer)
     {
@@ -21,9 +21,7 @@ public sealed record GuessResult(Blade Guess, Cell[] Cells, bool IsCorrect)
             new Cell("Type", guess.Type, guess.Type == answer.Type ? Hit.Exact : Hit.Miss),
             new Cell("Spin", guess.Spin, guess.Spin == answer.Spin ? Hit.Exact : Hit.Miss),
             Numeric("Weight", guess.Weight, answer.Weight, closeWithin: 1.5, format: v => $"{v:0.0} g"),
-            Numeric("ATK", guess.Atk, answer.Atk, closeWithin: 10, format: v => $"{v:0}"),
-            Numeric("DEF", guess.Def, answer.Def, closeWithin: 10, format: v => $"{v:0}"),
-            Numeric("STA", guess.Sta, answer.Sta, closeWithin: 10, format: v => $"{v:0}"),
+            new Cell("Line", guess.Line, guess.Line == answer.Line ? Hit.Exact : Hit.Miss),
             new Cell("Ratchet", guess.RatchetLabel, RatchetHit(guess, answer)),
             new Cell("Bit", guess.Bit, guess.Bit == answer.Bit ? Hit.Exact : guess.BitType == answer.BitType ? Hit.Partial : Hit.Miss),
             Numeric("Year", guess.Year, answer.Year, closeWithin: 0, format: v => $"{v:0}"),

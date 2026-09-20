@@ -26,8 +26,6 @@ public class GuessResultTests
         var r = GuessResult.Compare(WizardArrow, DranSword);
         Assert.False(r.IsCorrect);
         Assert.Equal(Direction.Higher, Cell(r, "Weight").Direction);   // 31.8 -> 34.9
-        Assert.Equal(Direction.Higher, Cell(r, "ATK").Direction);      // 20 -> 55
-        Assert.Equal(Direction.Lower, Cell(r, "STA").Direction);       // 60 -> 20
         Assert.Equal(Hit.Miss, Cell(r, "Type").Hit);
         Assert.Equal(Hit.Exact, Cell(r, "Spin").Hit);
     }
@@ -37,8 +35,16 @@ public class GuessResultTests
     {
         var r = GuessResult.Compare(SharkEdge, DranSword);
         Assert.Equal(Hit.Partial, Cell(r, "Weight").Hit); // 0.4 g apart
-        Assert.Equal(Hit.Exact, Cell(r, "ATK").Hit);
-        Assert.Equal(Hit.Exact, Cell(r, "DEF").Hit);
+    }
+
+    [Fact]
+    public void LineIsExactOrMiss()
+    {
+        Assert.Equal(Hit.Exact, Cell(GuessResult.Compare(WizardArrow, DranSword), "Line").Hit); // BX vs BX
+        var other = Cell(GuessResult.Compare(Griffon, DranSword), "Line");                       // UX vs BX
+        Assert.Equal(Hit.Miss, other.Hit);
+        Assert.Equal(Direction.None, other.Direction);
+        Assert.Equal("UX", other.Value);
     }
 
     [Fact]
