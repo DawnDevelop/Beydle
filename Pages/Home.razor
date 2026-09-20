@@ -129,7 +129,7 @@ else
             {
                 var stage = game.Image.Stage;
                 <h2 class="round-title">Round 2 · Which blade is this?</h2>
-                <div class="reveal-frame">
+                <div class="reveal-frame @(missing ? "miss" : "")">
                     <div class="reveal-shape" style="--blade-mask: url('@Nav.ToAbsoluteUri(game.Image.Answer.Image)')">
                         <img class="reveal-img stage-@stage" src="@game.Image.Answer.Image" alt="Hidden blade, obscured" />
                     </div>
@@ -232,7 +232,7 @@ else
                     <ul class="chips" aria-label="Wrong guesses">
                         @foreach (var g in Enumerable.Reverse(game.Image.Guesses))
                         {
-                            <li class="chip">@g.Name</li>
+                            <li class="chip" @key="g.Id">@g.Name</li>
                         }
                     </ul>
                 }
@@ -404,6 +404,10 @@ else
     private bool roundOneShown => game.Blade.Won && !revealing;
     /// <summary>Last card starts at 3.15 s and flips for 1.4 s (see .row.fresh in app.css).</summary>
     private const int RevealMs = 4700;
+    /// <summary>True while the round-2 miss animation plays (see .reveal-frame.miss in app.css).</summary>
+    private bool missing;
+    private int missToken;
+    private const int MissMs = 700;
     private Dialog dialog;
     private bool dialogFocusPending;
     private bool returnFocusPending;
@@ -510,6 +514,7 @@ else
         eggReply = null;
         copied = false;
         revealing = false;
+        missing = false;
         focusPending = true;
     }
 
@@ -598,6 +603,11 @@ else
             _ = FinishRevealLater(g);
         }
         if (inImageRound && blade.Id == g.Blade.Answer.Id) eggReply = "That one was round 1. Look at the picture.";
+        if (inImageRound && !g.Image.Won)
+        {
+            missing = true;
+            _ = EndMissLater(++missToken);
+        }
 
         if (practiceMode)
         {
@@ -621,6 +631,14 @@ else
             if (!justWonRoundOne) await CheckDailyAchievementsAsync();
         }
         if (!g.Complete) focusPending = true;
+    }
+
+    private async Task EndMissLater(int token)
+    {
+        await Task.Delay(MissMs);
+        if (token != missToken) return; // a newer miss restarted the animation
+        missing = false;
+        StateHasChanged();
     }
 
     private async Task FinishRevealLater(GameSession forGame)

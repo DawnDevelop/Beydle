@@ -177,6 +177,7 @@ button { font: inherit; cursor: pointer; }
 .round-title { margin: 0; font-size: 20px; }
 .reveal-note { margin: 0; color: var(--muted); font-size: 14px; }
 .reveal-frame {
+    position: relative;
     width: 240px; height: 240px;
     display: grid; place-items: center;
     border-radius: 18px;
@@ -184,8 +185,31 @@ button { font: inherit; cursor: pointer; }
     overflow: hidden;
 }
 .reveal-frame.solved { box-shadow: 0 0 0 3px var(--exact); }
+/* Wrong round-2 guess: the frame jolts, a red ring flares and fades, and the silhouette flushes red
+   before the next blur stage eases in. The .miss class is removed after MissMs (Home.razor). */
+.reveal-frame.miss { animation: miss-jolt .55s cubic-bezier(.36, .07, .19, .97) both; }
+.reveal-frame.miss::after {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    box-shadow: inset 0 0 0 3px #ff5c5c, inset 0 0 28px rgba(255, 92, 92, .55);
+    animation: miss-fade .7s ease-out both;
+}
+.reveal-frame.miss .reveal-shape::after {
+    content: ""; position: absolute; inset: 0; background: #ff5c5c;
+    animation: miss-fade .7s ease-out both;
+}
+@keyframes miss-jolt {
+    10%, 90% { transform: translateX(-2px) rotate(-.5deg); }
+    20%, 80% { transform: translateX(4px) rotate(.5deg); }
+    30%, 50%, 70% { transform: translateX(-8px) rotate(-1deg); }
+    40%, 60% { transform: translateX(8px) rotate(1deg); }
+}
+@keyframes miss-fade { from { opacity: .9; } to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+    .reveal-frame.miss { animation: none; }
+}
 /* Blur only the details inside a crisp silhouette, never the outer contour. */
 .reveal-shape {
+    position: relative;
     width: 205px; height: 205px;
     background: #8490a8;
     -webkit-mask: var(--blade-mask) center / contain no-repeat;
@@ -211,6 +235,14 @@ button { font: inherit; cursor: pointer; }
     background: var(--miss); color: var(--text);
     font-size: 13px; font-weight: 600;
     text-decoration: line-through; text-decoration-color: rgba(255, 255, 255, .35);
+    animation: chip-in .45s cubic-bezier(.2, .9, .3, 1.3) both;
+}
+@keyframes chip-in {
+    from { transform: scale(.6) translateY(-6px); opacity: 0; background: #ff5c5c; }
+    to { transform: scale(1) translateY(0); opacity: 1; background: var(--miss); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .chip { animation: none; }
 }
 .reveal-full {
     width: 140px; height: 140px; object-fit: contain;
