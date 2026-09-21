@@ -55,3 +55,5 @@ One-time setup in the GitHub repo: **Settings → Pages → Build and deployment
 ## Cheating
 
 This is a static site, so the answer is always discoverable by someone who opens the browser developer tools; that is true of every static Wordle clone. What is done: the schedule stores hashes rather than blade ids, image file names are hashed, all renders are prefetched together when round 2 starts so the network log does not single one out, and the blade id never appears in the page during round 2. No plain-text answer exists in the download; reading one requires reverse-engineering the app. Anything stronger needs a small server that holds the day's answers and evaluates guesses.
+
+<a href="https://www.buymeacoffee.com/DawnDevelop"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=DawnDevelop&button_colour=5F7FFF&font_colour=ffffff&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00" /></a>
