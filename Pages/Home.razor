@@ -18,12 +18,11 @@
         <h1>Beydle</h1>
     </div>
     <div class="topbar-actions">
-        @if (all is not null && StatsTracker.CurrentStreak(stats, today) is var streak && streak > 0)
+        @if (all is not null && StatsTracker.CurrentStreak(stats, today) is var streak)
         {
-            <span class="streak-badge" title="@streak-day streak" aria-label="@streak-day streak">🔥 @streak</span>
+            <button class="streak-badge" title="@streak-day streak" aria-label="@streak-day streak"  @onclick="() => OpenDialog(Dialog.Stats)">🔥 @streak <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="m16 6l2.29 2.29l-4.88 4.88l-4-4L2 16.59L3.41 18l6-6l4 4l6.3-6.29L22 12V6z" /></svg></button>
         }
         <button class="icon-btn" title="How to play" aria-label="How to play" @onclick="() => OpenDialog(Dialog.Help)">?</button>
-        <button class="icon-btn" title="Statistics" aria-label="Statistics" @onclick="() => OpenDialog(Dialog.Stats)">▥</button>
     </div>
 </header>
 
@@ -458,7 +457,6 @@ else
         if (dialogFocusPending)
         {
             dialogFocusPending = false;
-            await dialogCloseRef.FocusAsync();
             return;
         }
         if (game.Complete) return;
