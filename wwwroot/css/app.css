@@ -62,6 +62,11 @@ button { font: inherit; cursor: pointer; }
     animation: spin 1s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+.boot-intro { max-width: 560px; text-align: left; color: var(--muted); font-size: 15px; line-height: 1.55; }
+.boot-intro h1 { font-size: 24px; color: var(--text); margin: 8px 0 4px; }
+.boot-intro h2 { font-size: 16px; color: var(--text); margin: 16px 0 4px; }
+.boot-intro ul { padding-left: 20px; margin: 0; }
+.boot-intro li { margin: 4px 0; }
 .loading { padding: 64px 0; text-align: center; color: var(--muted); }
 
 #blazor-error-ui {
