@@ -20,7 +20,7 @@ dotnet test
 
 ## Deploy
 
-Pushing to `main` runs `.github/workflows/deploy.yml`, which publishes the app and deploys it to GitHub Pages at `/Beydle/`.
+Pushing to `main` runs `.github/workflows/deploy.yml`, which publishes the app and deploys it to GitHub Pages at `beydle.com`.
 
 One-time setup in the GitHub repo: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
 

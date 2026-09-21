@@ -26,8 +26,6 @@ jobs:
         run: dotnet test tests/Beydle.Tests/Beydle.Tests.csproj -c Release
       - name: Publish
         run: dotnet publish Beydle.csproj -c Release -o publish
-      - name: Rewrite base href for repo sub-path
-        run: sed -i 's|<base href="/" />|<base href="/Beydle/" />|' publish/wwwroot/index.html
       - name: SPA fallback for deep links
         run: cp publish/wwwroot/index.html publish/wwwroot/404.html
       - uses: actions/upload-pages-artifact@v3
