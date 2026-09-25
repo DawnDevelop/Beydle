@@ -46,8 +46,8 @@ public class AchievementsTests
     private static readonly Blade KnightShield = Named("Knight Shield");
     private static readonly IReadOnlyList<Blade> Pool = [DranSword, DranBuster, DranDagger, HellsScythe, KnightShield];
 
-    private static List<Achievement> Earned(GameSession g, Stats? stats = null, IReadOnlySet<string>? seen = null) =>
-        Achievements.Earned(g, stats ?? new Stats(), Pool, seen ?? new HashSet<string>()).ToList();
+    private static List<Achievement> Earned(GameSession g, Stats? stats = null, IReadOnlySet<string>? seen = null, DateOnly? day = null, IReadOnlyList<Blade>? pool = null) =>
+        Achievements.Earned(g, stats ?? new Stats(), pool ?? Pool, seen ?? new HashSet<string>(), day ?? new DateOnly(2026, 1, 1)).ToList();
 
     [Fact]
     public void NothingIsEarnedBeforeTheFirstGuess() => Assert.Empty(Earned(new GameSession(DranSword, HellsScythe)));
@@ -114,6 +114,51 @@ public class AchievementsTests
         Assert.Contains(Achievements.Encyclopedia, Earned(g, seen: allSeen));
         allSeen.Remove(DranDagger.Id);
         Assert.DoesNotContain(Achievements.Encyclopedia, Earned(g, seen: allSeen));
+    }
+
+    [Fact]
+    public void PhotoFinishIsAWrongGuessOffByOneColumn()
+    {
+        var answer = Make("answer", null);
+        var g = new GameSession(answer, HellsScythe);
+        g.Submit(answer with { Id = "near", Owner = "Someone" }); // only Owner differs
+        Assert.Contains(Achievements.PhotoFinish, Earned(g));
+
+        var far = new GameSession(answer, HellsScythe);
+        far.Submit(answer with { Id = "far", Owner = "Someone", Type = "Stamina" });
+        Assert.DoesNotContain(Achievements.PhotoFinish, Earned(far));
+    }
+
+    [Fact]
+    public void CounterSpinAnniversaryAndExtremeModeNeedASolve()
+    {
+        var lefty = Make("lefty", "2024-05-02") with { Spin = "Left" };
+        IReadOnlyList<Blade> pool = [.. Pool, lefty];
+        var g = new GameSession(lefty, HellsScythe) { Extreme = true };
+        g.Submit(KnightShield);
+        var anniversary = new DateOnly(2026, 5, 2);
+        Assert.DoesNotContain(Achievements.CounterSpin, Earned(g, day: anniversary, pool: pool));
+        g.Submit(lefty);
+        var earned = Earned(g, day: anniversary, pool: pool);
+        Assert.Contains(Achievements.CounterSpin, earned);
+        Assert.Contains(Achievements.ManyHappyReturns, earned);
+        Assert.Contains(Achievements.ByTheBook, earned);
+        Assert.DoesNotContain(Achievements.ManyHappyReturns, Earned(g, day: anniversary.AddDays(1), pool: pool));
+    }
+
+    [Fact]
+    public void OutsmartedTheBotNeedsFewerGuessesThanBeydleBot()
+    {
+        var pool = DeductionTests.RealPool();
+        var answer = pool.First(b => Deduction.BotGuesses(pool, b) > 1);
+        var g = new GameSession(answer, pool.First(b => b != answer));
+        g.Submit(answer);
+        Assert.Contains(Achievements.OutsmartedTheBot, Earned(g, pool: pool));
+
+        var slow = new GameSession(answer, pool.First(b => b != answer));
+        foreach (var b in pool.Where(b => b != answer).Take(7)) slow.Submit(b);
+        slow.Submit(answer);
+        Assert.DoesNotContain(Achievements.OutsmartedTheBot, Earned(slow, pool: pool));
     }
 
     [Fact]

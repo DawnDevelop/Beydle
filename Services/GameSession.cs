@@ -44,15 +44,25 @@ public sealed class GameSession(Blade bladeAnswer, Blade imageAnswer)
     public BladeRound Blade { get; } = new(bladeAnswer);
     public ImageRound Image { get; } = new(imageAnswer);
 
+    /// <summary>
+    /// Xtreme mode: every round-1 guess must fit all hints so far. It can only be switched on before the first
+    /// guess, so while it is on, the whole of round 1 was played that way.
+    /// </summary>
+    public bool Extreme { get; set; }
+
     public bool Complete => Image.Won;
     public bool InImageRound => Blade.Won && !Image.Won;
 
     /// <summary>Ids already tried in the active round; excluded from suggestions.</summary>
     public IEnumerable<string> GuessedIds => Blade.Won ? Image.Guesses.Select(b => b.Id) : Blade.Guesses.Select(g => g.Guess.Id);
 
-    /// <summary>Feeds a guess to the active round. Returns false when the game is already complete.</summary>
+    /// <summary>Why Xtreme mode refuses this round-1 guess, or null when it is allowed.</summary>
+    public string? Rejects(Blade guess) => Extreme && !Blade.Won ? Deduction.Violation(guess, Blade.Guesses) : null;
+
+    /// <summary>Feeds a guess to the active round. Returns false when the game is complete or Xtreme mode refuses it.</summary>
     public bool Submit(Blade guess)
     {
+        if (Rejects(guess) is not null) return false;
         if (!Blade.Won) { Blade.Submit(guess); return true; }
         if (!Image.Won) { Image.Submit(guess); return true; }
         return false;
@@ -78,7 +88,8 @@ public sealed class GameSession(Blade bladeAnswer, Blade imageAnswer)
     public string ShareText(string title, string url)
     {
         var xtreme = Blade.Guesses.Count == 1 ? " ⚡" : "";
-        var lines = new List<string> { $"{title} – Blade {Blade.Guesses.Count}/∞ · Image {Image.Guesses.Count}/∞{xtreme}" };
+        var extreme = Extreme ? "*" : "";
+        var lines = new List<string> { $"{title} – Blade {Blade.Guesses.Count}/∞{extreme} · Image {Image.Guesses.Count}/∞{xtreme}" };
         lines.AddRange(Blade.Guesses.Select(g => string.Concat(g.Cells.Select(c => c.Emoji))));
         lines.Add("🖼 " + string.Concat(Image.Guesses.Select(b => b.Id == Image.Answer.Id ? "🟩" : "⬛")));
         lines.Add(url);

@@ -20,11 +20,17 @@ public static class Achievements
     public static readonly Achievement IronWill = new("iron-will", "Iron Will", "Kept a 30-day streak.", "💎");
     public static readonly Achievement Grinder = new("grinder", "Grinder", "Finished 10 practice rounds in one sitting.", "🏋️");
     public static readonly Achievement Encyclopedia = new("encyclopedia", "Encyclopedia", "Guessed every blade in the pool at least once in daily mode.", "📚");
+    public static readonly Achievement PhotoFinish = new("photo-finish", "Photo Finish", "Made a wrong guess that matched on every column but one.", "📸");
+    public static readonly Achievement CounterSpin = new("counter-spin", "Counter-Spin", "Solved a day whose blade spins left.", "🌀");
+    public static readonly Achievement ManyHappyReturns = new("many-happy-returns", "Many Happy Returns", "Solved a blade on its release anniversary.", "🎂");
+    public static readonly Achievement ByTheBook = new("by-the-book", "By the Book", "Solved round 1 in Xtreme mode.", "📏");
+    public static readonly Achievement OutsmartedTheBot = new("outsmarted-the-bot", "Outsmarted the Bot", "Solved round 1 in fewer guesses than Beydle Bot.", "🤖");
 
     public static readonly IReadOnlyList<Achievement> All =
     [
         LetItRip, XtremeFinish, SharpEye, PerfectDay, StaminaType, AsClearAsItGets,
         FamilyReunion, DejaVu, OnARoll, IronWill, Grinder, Encyclopedia,
+        PhotoFinish, CounterSpin, ManyHappyReturns, ByTheBook, OutsmartedTheBot,
     ];
 
     public const int StaminaGuesses = 15;
@@ -53,7 +59,7 @@ public static class Achievements
     /// Everything the daily game and stats currently satisfy. Callers unlock whatever is new; evaluating
     /// the whole set every time keeps the rules in one place and makes restoring a saved day trivial.
     /// </summary>
-    public static IEnumerable<Achievement> Earned(GameSession daily, Stats stats, IReadOnlyList<Blade> pool, IReadOnlySet<string> seen)
+    public static IEnumerable<Achievement> Earned(GameSession daily, Stats stats, IReadOnlyList<Blade> pool, IReadOnlySet<string> seen, DateOnly day)
     {
         var r1 = daily.Blade;
         var r2 = daily.Image;
@@ -68,6 +74,11 @@ public static class Achievements
         if (stats.Streak >= 7) yield return OnARoll;
         if (stats.Streak >= 30) yield return IronWill;
         if (pool.Count > 0 && pool.All(b => seen.Contains(b.Id))) yield return Encyclopedia;
+        if (r1.Guesses.Any(g => !g.IsCorrect && g.Cells.Count(c => c.Hit != Hit.Exact) == 1)) yield return PhotoFinish;
+        if (r1.Won && r1.Answer.Spin == "Left") yield return CounterSpin;
+        if (r1.Won && AnniversaryYears(r1.Answer, day) is not null) yield return ManyHappyReturns;
+        if (r1.Won && daily.Extreme) yield return ByTheBook;
+        if (r1.Won && r1.Guesses.Count < Deduction.BotGuesses(pool, r1.Answer)) yield return OutsmartedTheBot;
     }
 
     /// <summary>The family is the first word of the name: Dran, Hells, Phoenix, Knight…</summary>

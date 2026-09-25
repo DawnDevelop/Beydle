@@ -159,6 +159,28 @@ button { font: inherit; cursor: pointer; }
 .round-pill.done { background: var(--exact); border-color: var(--exact); color: #04150c; }
 .round-arrow { color: var(--muted); }
 
+/* ---------- Xtreme mode switch ---------- */
+.extreme-row { display: flex; justify-content: center; margin: -6px 0 18px; }
+.extreme-toggle {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 5px 12px 5px 6px; border-radius: 999px;
+    background: var(--card); border: 1px solid var(--border); color: var(--muted);
+    font-size: 13px; font-weight: 600;
+}
+.extreme-toggle .knob {
+    position: relative; width: 30px; height: 18px; border-radius: 999px;
+    background: var(--miss); transition: background .2s;
+}
+.extreme-toggle .knob::after {
+    content: ""; position: absolute; top: 3px; left: 3px; width: 12px; height: 12px; border-radius: 50%;
+    background: var(--muted); transition: transform .2s, background .2s;
+}
+.extreme-toggle.on { color: var(--text); border-color: rgba(227, 179, 65, .55); }
+.extreme-toggle.on .knob { background: rgba(227, 179, 65, .35); }
+.extreme-toggle.on .knob::after { transform: translateX(12px); background: var(--partial); }
+.extreme-toggle:disabled { cursor: default; opacity: .7; }
+.extreme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
 /* ---------- round 1 summary strip (while round 2 is running) ---------- */
 .round-strip {
     max-width: 640px; margin: 0 auto 16px;
@@ -169,6 +191,8 @@ button { font: inherit; cursor: pointer; }
 .strip-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .strip-title { font-weight: 700; }
 .strip-sub { color: var(--muted); font-size: 13px; font-family: var(--mono); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.analysis { color: var(--muted); font-size: 13px; }
+.result .analysis { margin: -8px 0 16px; }
 
 .prefetch { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; }
 .prefetch img { width: 1px; height: 1px; }
@@ -278,6 +302,7 @@ button { font: inherit; cursor: pointer; }
 
 /* ---------- search ---------- */
 .guess-box { max-width: 560px; margin: 0 auto 24px; }
+.guess-box.revealing { visibility: hidden; }
 .search { position: relative; }
 .search-input {
     width: 100%;
@@ -364,6 +389,9 @@ button { font: inherit; cursor: pointer; }
     color: var(--final-fg);
 }
 .cell.name.exact .c { color: #04150c; opacity: .75; }
+/* The newest count waits until its row's last card has landed (see the delays below), so it cannot spoil the turn. */
+.row.fresh .left-count, .hint-text .left-count { animation: count-in .5s 3.3s both; }
+@keyframes count-in { from { opacity: 0; } to { opacity: 1; } }
 .arrow { position: absolute; right: 6px; top: 4px; font-style: normal; font-size: 11px; opacity: .8; }
 
 /* Separate faces turn continuously; each card has its own vanishing point. */

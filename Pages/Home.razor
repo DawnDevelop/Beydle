@@ -61,6 +61,13 @@ else
         <li class="round-pill @(game.Image.Won ? "done" : roundOneShown ? "active" : "")" aria-current="@(roundOneShown && !game.Image.Won ? "step" : null)">2 · Image</li>
     </ol>
 
+    <div class="extreme-row">
+        <button class="extreme-toggle @(game.Extreme ? "on" : "")" role="switch" aria-checked="@(game.Extreme ? "true" : "false")"
+                disabled="@ExtremeLocked" title="@ExtremeTitle" @onclick="ToggleExtreme">
+            <span class="knob" aria-hidden="true"></span> Xtreme mode@(ExtremeLocked ? " 🔒" : "")
+        </button>
+    </div>
+
     @if (roundOneShown)
     {
         var answer = game.Blade.Answer;
@@ -77,6 +84,7 @@ else
                     {
                         <span class="anniversary">🎂 Released exactly @y @(y == 1 ? "year" : "years") ago today</span>
                     }
+                    <span class="analysis">@Analysis()</span>
                 </div>
             </section>
         }
@@ -95,6 +103,7 @@ else
                 {
                     <p class="anniversary">🎂 Released exactly @y @(y == 1 ? "year" : "years") ago today</p>
                 }
+                <p class="analysis">@Analysis()</p>
                 <div class="reveal">
                     <img class="reveal-full" src="@answer.Image" alt="" />
                     <div class="reveal-head">
@@ -160,6 +169,7 @@ else
                         <button class="btn primary" @onclick="NewPractice">Next round</button>
                     }
                     <button class="btn @(practiceMode ? "" : "primary")" @onclick="Share">@(copied ? "Copied!" : "Share result")</button>
+                    <button class="btn" @onclick="ShareImage">@(imageShareStatus ?? "Share image")</button>
                     @if (!practiceMode)
                     {
                         <span class="countdown">Next blade in <strong>@countdown</strong></span>
@@ -171,7 +181,8 @@ else
 
     @if (!game.Complete)
     {
-        <section class="guess-box">
+        @* Hidden, not removed, while the winning row turns: nothing that looks like a loading box, and the board does not jump. *@
+        <section class="guess-box @(revealing ? "revealing" : "")">
             <div class="search @(suggestions.Count > 0 ? "open" : "")">
                 <input @ref="inputRef"
                        class="search-input"
@@ -242,7 +253,17 @@ else
             }
             else
             {
-                <p class="hint-text">@(game.Blade.Guesses.Count == 0 ? "Unlimited guesses. Takara Tomy and Hasbro names both work." : $"{game.Blade.Guesses.Count} {(game.Blade.Guesses.Count == 1 ? "guess" : "guesses")} so far")</p>
+                var n = game.Blade.Guesses.Count;
+                @if (n == 0)
+                {
+                    <p class="hint-text">@(game.Extreme ? "Xtreme mode: every guess must fit all the hints so far." : "Unlimited guesses. Takara Tomy and Hasbro names both work.")</p>
+                }
+                else
+                {
+                    var possible = Left[^1];
+                    @* Keyed so the count fades in again after each guess, once the new row's cards have turned. *@
+                    <p class="hint-text">@n @(n == 1 ? "guess" : "guesses") so far · <span class="left-count" @key="n"><strong>@possible</strong> @(possible == 1 ? "blade fits" : "blades fit") your hints</span></p>
+                }
             }
         </section>
     }
@@ -262,12 +283,13 @@ else
                         <div class="cell">@label</div>
                     }
                 </div>
-                @foreach (var g in Enumerable.Reverse(game.Blade.Guesses))
+                @for (var i = game.Blade.Guesses.Count - 1; i >= 0; i--)
                 {
+                    var g = game.Blade.Guesses[i];
                     <div class="row @(g == game.Blade.Guesses[^1] ? "fresh" : "")" @key="g.Guess.Id">
                         <div class="cell name @(g.IsCorrect && !revealing ? "exact" : "")">
                             <span class="n">@g.Guess.Name</span>
-                            <span class="c">@g.Guess.Code</span>
+                            <span class="c">@g.Guess.Code<span class="left-count" title="Blades that still fit the hints after this guess">@(g.IsCorrect ? "" : $" · {Left[i]} left")</span></span>
                         </div>
                         @foreach (var c in g.Cells)
                         {
@@ -314,7 +336,9 @@ else
                     <li><span class="swatch miss"></span><span><strong>Grey</strong> – no match.</span></li>
                     <li><span class="swatch arrow-demo">▲</span><span>Arrows on numbers show whether the answer is <strong>higher</strong> or <strong>lower</strong>.</span></li>
                 </ul>
+                <p>Under the guess box you can see how many blades still fit every hint so far; each row shows how many were left after it. Once you solve it, Beydle Bot shows how many guesses it would have needed. The bot always plays the blade that narrows the field the most.</p>
                 <p><strong>Round 2.</strong> Once round 1 is solved, a second, different blade appears as a silhouette. Name it. The silhouette gets a little clearer with each wrong guess, colour shows after two misses, and the picture is at its sharpest after seven.</p>
+                <p><strong>Xtreme mode</strong> only accepts round 1 guesses that fit all the hints so far. It can be switched on only before your first guess, and off at any time during round 1. Results shared from Xtreme mode carry a *.</p>
                 <p class="muted">Weight is the blade alone. Line is the product series the blade belongs to (BX, UX or CX). Ratchet and bit are the stock combo the blade first shipped with. Year is the first Takara Tomy release. Owner is the anime character who uses the blade.</p>
                 <p class="muted"><strong>Practice</strong> mode plays both rounds with random blades as often as you like and does not count toward your stats.</p>
             }
@@ -414,6 +438,8 @@ else
     private ElementReference dialogRef;
     private ElementReference dialogCloseRef;
     private bool copied;
+    /// <summary>Button label after an image share ("Image copied!", …); null shows the default label.</summary>
+    private string? imageShareStatus;
     /// <summary>Reply to a typed battle call; shown in place of the hint while the text stays in the box.</summary>
     private string? eggReply;
     private Achievement? toast;
@@ -482,7 +508,9 @@ else
             state.Day = key;
             state.Guesses = [];
             state.ImageGuesses = [];
+            state.DayExtreme = state.ExtremeMode;
         }
+        daily.Extreme = state.DayExtreme;
         daily.Restore(pool, state.Guesses, state.ImageGuesses);
         if (daily.Blade.Guesses.Count > 0) _ = CheckDailyAchievementsAsync();
         UpdateCountdown();
@@ -495,7 +523,7 @@ else
         var first = candidates[Random.Shared.Next(candidates.Count)];
         var rest = candidates.Where(b => b.Id != first.Id).ToList();
         var second = rest[Random.Shared.Next(rest.Count)];
-        practice = new GameSession(first, second);
+        practice = new GameSession(first, second) { Extreme = state.ExtremeMode };
         ResetInput();
     }
 
@@ -512,6 +540,7 @@ else
         suggestions = [];
         eggReply = null;
         copied = false;
+        imageShareStatus = null;
         revealing = false;
         missing = false;
         focusPending = true;
@@ -593,9 +622,16 @@ else
         suggestions = [];
         eggReply = null;
 
+        if (g.Rejects(blade) is string why)
+        {
+            eggReply = $"Xtreme mode: {why}";
+            focusPending = true;
+            return;
+        }
         var inImageRound = g.InImageRound;
         if (!g.Submit(blade)) return;
         var justWonRoundOne = !inImageRound && g.Blade.Won;
+        if (!inImageRound) _ = WarmUpBotLater(g.Blade.Answer);
         if (justWonRoundOne)
         {
             revealing = true;
@@ -632,6 +668,16 @@ else
         if (!g.Complete) focusPending = true;
     }
 
+    /// <summary>
+    /// Runs Beydle Bot while the new row's cards turn (a compositor animation a busy thread does not stall), so its
+    /// one slow step does not hold up the round-1 reveal later. Cached, so later guesses cost nothing.
+    /// </summary>
+    private async Task WarmUpBotLater(Blade answer)
+    {
+        await Task.Delay(300);
+        Deduction.BotGuesses(pool, answer);
+    }
+
     private async Task EndMissLater(int token)
     {
         await Task.Delay(MissMs);
@@ -653,7 +699,7 @@ else
     /// <summary>Daily mode only, so practice rounds cannot farm these. Unlocking is idempotent.</summary>
     private async Task CheckDailyAchievementsAsync()
     {
-        foreach (var a in Achievements.Earned(daily, state.Stats, pool, state.Seen).ToList())
+        foreach (var a in Achievements.Earned(daily, state.Stats, pool, state.Seen, today).ToList())
             await UnlockAsync(a);
     }
 
@@ -676,6 +722,66 @@ else
             StateHasChanged();
             await Task.Delay(300);
         }
+    }
+
+    /// <summary>Xtreme mode goes on only before the first guess, and off at any time until round 1 is solved.</summary>
+    private bool ExtremeLocked => game.Blade.Won || (!game.Extreme && game.Blade.Guesses.Count > 0);
+
+    private string ExtremeTitle =>
+        game.Blade.Won ? "Round 1 is over"
+        : ExtremeLocked ? "Xtreme mode can only be switched on before your first guess"
+        : game.Extreme && game.Blade.Guesses.Count > 0 ? "Switch Xtreme mode off. It can't be switched back on for this round."
+        : "Every guess must fit all the hints so far";
+
+    private async Task ToggleExtreme()
+    {
+        if (ExtremeLocked) return;
+        var on = !game.Extreme;
+        state.ExtremeMode = on;
+        game.Extreme = on;
+        if (ReferenceEquals(game, daily)) state.DayExtreme = on;
+        // The preference also reaches the other game if it has not started, so switching tabs never shows a stale switch.
+        if (daily.Blade.Guesses.Count == 0) daily.Extreme = state.DayExtreme = on;
+        if (practice.Blade.Guesses.Count == 0) practice.Extreme = on;
+        if (!on && eggReply?.StartsWith("Xtreme mode:") == true)
+            eggReply = null;
+        await Storage.SaveAsync(state);
+        focusPending = true;
+    }
+
+    private (BladeRound? Round, int Count, int[] Left) leftMemo;
+
+    /// <summary>Blades still possible after each round-1 guess of the active game. Recomputed only when a guess is added.</summary>
+    private int[] Left
+    {
+        get
+        {
+            var r = game.Blade;
+            if (leftMemo.Round != r || leftMemo.Count != r.Guesses.Count)
+                leftMemo = (r, r.Guesses.Count, Deduction.RemainingAfterEach(pool, r.Guesses));
+            return leftMemo.Left;
+        }
+    }
+
+    /// <summary>Round-1 wrap-up: how Beydle Bot did, and which wrong guess narrowed the field the most.</summary>
+    private string Analysis()
+    {
+        var guesses = game.Blade.Guesses;
+        var left = Left;
+        var bot = Deduction.BotGuesses(pool, game.Blade.Answer);
+        var verdict = guesses.Count < bot ? ", you beat it" : guesses.Count == bot ? ", you matched it" : "";
+        var text = $"🤖 Beydle Bot needed {bot} {(bot == 1 ? "guess" : "guesses")}{verdict}";
+        int? best = null;
+        var bestRatio = 1.0;
+        for (var i = 0; i < guesses.Count; i++)
+        {
+            if (guesses[i].IsCorrect) continue;
+            var ratio = (double)left[i] / (i == 0 ? pool.Count : left[i - 1]);
+            if (ratio < bestRatio) (best, bestRatio) = (i, ratio);
+        }
+        // With a single wrong guess there is nothing to compare it with.
+        if (best is int b && guesses.Count(g => !g.IsCorrect) >= 2) text += $" · sharpest guess: {guesses[b].Guess.Name}, {(b == 0 ? pool.Count : left[b - 1])} → {left[b]}";
+        return text;
     }
 
     private static int DistOrder(string key) => key == "7+" ? 7 : int.Parse(key);
@@ -712,6 +818,29 @@ else
         if (!copied) return;
         await Task.Delay(2000);
         copied = false;
+    }
+
+    private async Task ShareImage()
+    {
+        var g = game;
+        var left = Left;
+        var status = await Storage.ShareImageAsync(new
+        {
+            title = practiceMode ? "Beydle practice" : $"Beydle #{dayNumber}",
+            summary = $"Blade: {Guesses(g.Blade.Guesses.Count)} · Image: {Guesses(g.Image.Guesses.Count)}{(g.Blade.Guesses.Count == 1 ? " · ⚡ Xtreme Finish" : "")}",
+            extreme = g.Extreme,
+            columns = GuessResult.Labels.Length,
+            rows = g.Blade.Guesses.Select(r => r.Cells.Select(c => (int)c.Hit).ToArray()).ToArray(),
+            left = g.Blade.Guesses.Select((r, i) => r.IsCorrect ? "" : $"{left[i]} left").ToArray(),
+            picture = g.Image.Guesses.Select(b => b.Id == g.Image.Answer.Id).ToArray(),
+            site = new Uri(Nav.BaseUri).Host,
+        });
+        static string Guesses(int n) => $"{n} {(n == 1 ? "guess" : "guesses")}";
+        imageShareStatus = status switch { "shared" => "Shared!", "copied" => "Image copied!", "saved" => "Image saved!", "failed" => "Couldn't share", _ => null };
+        if (imageShareStatus is null) return;
+        StateHasChanged();
+        await Task.Delay(2000);
+        imageShareStatus = null;
     }
 
     public void Dispose() => timer?.Dispose();
