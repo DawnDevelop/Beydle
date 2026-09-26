@@ -72,14 +72,22 @@ button { font: inherit; cursor: pointer; }
     gap: 16px;
     color: var(--muted);
 }
-.boot-ring {
-    width: 56px; height: 56px;
-    border-radius: 50%;
-    border: 4px solid var(--border);
-    border-top-color: var(--accent);
-    animation: spin 1s linear infinite;
+/* The brand blade spinning right like a launched top, drifting in a small circle as it precesses. */
+.boot-top { animation: boot-precess 1.4s linear infinite; }
+.boot-blade {
+    display: block;
+    animation: spin .5s linear infinite;
+    filter: drop-shadow(0 0 14px rgba(91, 140, 255, .45));
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+@keyframes boot-precess {
+    from { transform: rotate(0deg) translateX(3px) rotate(0deg); }
+    to { transform: rotate(360deg) translateX(3px) rotate(-360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .boot-top { animation: none; }
+    .boot-blade { animation-duration: 9s; }
+}
 .boot-intro { max-width: 560px; text-align: left; color: var(--muted); font-size: 15px; line-height: 1.55; }
 .boot-intro h1 { font-size: 24px; color: var(--text); margin: 8px 0 4px; }
 .boot-intro h2 { font-size: 16px; color: var(--text); margin: 16px 0 4px; }

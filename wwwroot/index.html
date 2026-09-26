@@ -36,7 +36,19 @@
 <body>
     <div id="app">
         <div class="boot">
-            <div class="boot-ring"></div>
+            <div class="boot-top" aria-hidden="true">
+                <svg class="boot-blade" viewBox="0 0 48 48" width="64" height="64">
+                    <defs>
+                        <linearGradient id="boot-blade-fill" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0" stop-color="#5b8cff" />
+                            <stop offset="1" stop-color="#b15bff" />
+                        </linearGradient>
+                    </defs>
+                    <path fill="url(#boot-blade-fill)" fill-rule="evenodd" d="M24 7 Q30.14 2.87 35.79 5.42 L36.02 11.98 Q43.28 13.4 45.47 19.2 L41 24 Q45.13 30.14 42.58 35.79 L36.02 36.02 Q34.6 43.28 28.8 45.47 L24 41 Q17.86 45.13 12.21 42.58 L11.98 36.02 Q4.72 34.6 2.53 28.8 L7 24 Q2.87 17.86 5.42 12.21 L11.98 11.98 Q13.4 4.72 19.2 2.53 L24 7 Z M24 13.5 A10.5 10.5 0 1 0 24 34.5 A10.5 10.5 0 1 0 24 13.5 Z" />
+                    <circle cx="24" cy="24" r="7" fill="#fff" opacity=".35" />
+                    <circle cx="24" cy="24" r="3" fill="#fff" />
+                </svg>
+            </div>
             <p>Loading Beydle…</p>
             <div class="boot-intro">
                 <h1>Beydle</h1>
