@@ -55,6 +55,20 @@ Build settings in the Cloudflare dashboard (Worker → Settings → Build):
 
 `wwwroot/data/schedule.json` maps every date to hashes of its two blade ids (`SHA-256(salt|date|id)`, see `ScheduleHash`) and is the source of truth; the app hashes each candidate for the day and takes the match. Days missing from the file fall back to the generator in `DailyPicker`, which is also what `tools/build-schedule.js` uses to fill the file: days are grouped into cycles of `pool size` days, each cycle a seeded shuffle of the whole pool, so every blade appears once per cycle and never on two consecutive days. The round-2 blade reads the same sequence from a fixed offset and skips the day's round-1 blade. There is no server: every visitor reads the same schedule. Because past and current days are kept when the schedule is regenerated, adding blades never changes a day that is already live.
 
+## Stats
+
+Every accepted guess sends one anonymous event to `POST /api/event`, handled by `worker/index.js`, which validates it and writes it to the Workers Analytics Engine dataset `beydle_events`. An event holds the date, mode, round, guessed blade id, guess number, whether it solved the round and whether Xtreme mode was on; no user id, cookie, IP address or local-storage data is sent or stored. The endpoint never returns data. The column layout is documented at the top of the worker.
+
+Query it with the SQL API, using an API token with **Account Analytics: Read**:
+
+```bash
+curl "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/analytics_engine/sql" \
+  -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+  -d "SELECT blob3 AS blade, SUM(_sample_interval) AS guesses FROM beydle_events WHERE blob1 = 'daily' AND timestamp > NOW() - INTERVAL '7' DAY GROUP BY blade ORDER BY guesses DESC"
+```
+
+Other useful queries: daily players (`double1 = 1 AND blob2 = '1'`, grouped by `index1`), average guesses to solve (`AVG(double1)` where `blob4 = 'solved'`), and the most common first guess (`double1 = 1`, grouped by `blob3`).
+
 ## Cheating
 
 This is a static site, so the answer is always discoverable by someone who opens the browser developer tools; that is true of every static Wordle clone. What is done: the schedule stores hashes rather than blade ids, image file names are hashed, all renders are prefetched together when round 2 starts so the network log does not single one out, and the blade id never appears in the page during round 2. No plain-text answer exists in the download; reading one requires reverse-engineering the app. Anything stronger needs a small server that holds the day's answers and evaluates guesses.

@@ -3,6 +3,7 @@
 @inject BladeService Blades
 @inject StorageService Storage
 @inject NavigationManager Nav
+@inject HttpClient Http
 
 <PageTitle>Beydle - daily Beyblade X guessing game</PageTitle>
 
@@ -644,6 +645,7 @@ else
         }
         var inImageRound = g.InImageRound;
         if (!g.Submit(blade)) return;
+        _ = ReportGuessAsync(g, blade, inImageRound);
         var justWonRoundOne = !inImageRound && g.Blade.Won;
         if (!inImageRound) _ = WarmUpBotLater(g.Blade.Answer);
         if (justWonRoundOne)
@@ -680,6 +682,29 @@ else
             if (!justWonRoundOne) await CheckDailyAchievementsAsync();
         }
         if (!g.Complete) focusPending = true;
+    }
+
+    /// <summary>
+    /// Sends one anonymous event per guess to the Worker (worker/index.js) for aggregate stats. Best effort: a failed
+    /// request is ignored, and debug days are not reported.
+    /// </summary>
+    private async Task ReportGuessAsync(GameSession g, Blade blade, bool inImageRound)
+    {
+        if (debugDayOverride is not null) return;
+        try
+        {
+            await Http.PostAsJsonAsync("api/event", new
+            {
+                date = today.ToString("yyyy-MM-dd"),
+                mode = practiceMode ? "practice" : "daily",
+                round = inImageRound ? 2 : 1,
+                guess = blade.Id,
+                number = inImageRound ? g.Image.Guesses.Count : g.Blade.Guesses.Count,
+                solved = inImageRound ? g.Image.Won : g.Blade.Won,
+                xtreme = g.Extreme,
+            });
+        }
+        catch (HttpRequestException) { }
     }
 
     /// <summary>

@@ -1,8 +1,13 @@
 {
   "name": "beydle",
+  "main": "worker/index.js",
   "compatibility_date": "2026-09-26",
   "workers_dev": false,
   "assets": {
-    "directory": "./output/wwwroot"
-  }
+    "directory": "./output/wwwroot",
+    "binding": "ASSETS"
+  },
+  "analytics_engine_datasets": [
+    { "binding": "EVENTS", "dataset": "beydle_events" }
+  ]
 }
