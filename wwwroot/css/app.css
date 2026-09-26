@@ -593,6 +593,8 @@ button { font: inherit; cursor: pointer; }
 
 /* ---------- footer ---------- */
 .about { margin: 36px auto 0; }
+.about summary { text-align: center; color: var(--muted); font-size: 13px; cursor: pointer; }
+.about summary:hover { color: var(--text); }
 .foot { margin-top: 36px; text-align: center; color: var(--muted); font-size: 12px; }
 
 @media (max-width: 600px) {
