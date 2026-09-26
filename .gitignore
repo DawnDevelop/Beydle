@@ -5,3 +5,4 @@ publish/
 .vs/
 output/
 .wrangler/
+meta/data/

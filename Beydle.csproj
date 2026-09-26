@@ -9,9 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="tests\**" />
-    <Content Remove="tests\**" />
-    <None Remove="tests\**" />
+    <Compile Remove="tests\**;meta\**" />
+    <Content Remove="tests\**;meta\**" />
+    <None Remove="tests\**;meta\**" />
+    <!-- Read back by the meta indexer's REPROCESS mode; the site does not use it. -->
+    <Content Remove="wwwroot\data\meta\unmatched.json" />
   </ItemGroup>
 
   <ItemGroup>

@@ -11,3 +11,4 @@
 ## Play
 
 - [Beydle](https://beydle.com/): the daily game, with practice mode on the same page
+- [Beyblade X tournament meta](https://beydle.com/meta): blades, combos, ratchets, bits and three-blade decks ranked by top-3 finishes at World Beyblade Organization events, with movement against the previous period

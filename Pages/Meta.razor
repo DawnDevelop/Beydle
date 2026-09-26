@@ -1,0 +1,199 @@
+@page "/meta"
+@inject HttpClient Http
+
+<PageTitle>Beyblade X tournament meta - Beydle</PageTitle>
+
+<TopBar OnMetaPage="true" />
+
+<section class="intro">
+    <h1 class="tagline">What wins <strong>Beyblade X</strong> tournaments</h1>
+    <p class="meta">
+        Top-3 finishes at WBO organised events
+        @if (board?.Anchor is { } through)
+        {
+            <text> · data through @through.ToString("d MMM yyyy")</text>
+        }
+    </p>
+</section>
+
+@if (error is not null)
+{
+    <p class="loading" role="status">@error</p>
+}
+else if (board is null)
+{
+    <div class="loading" role="status">
+        <BladeSpinner />
+        <p>Loading tournament results…</p>
+    </div>
+}
+else
+{
+    <nav class="modes meta-tabs" role="tablist" aria-label="Rank by">
+        @foreach (var v in Enum.GetValues<MetaView>())
+        {
+            <button class="mode @(v == view ? "active" : "")" role="tab" aria-selected="@(v == view ? "true" : "false")" @onclick="() => SetView(v)">@v</button>
+        }
+    </nav>
+
+    var shown = Shown;
+    <div class="meta-toolbar">
+        <select class="meta-select" aria-label="Time range" value="@window" @onchange="e => SetWindow((string)e.Value!)">
+            @foreach (var w in MetaLeaderboard.Windows)
+            {
+                <option value="@w.Key">@w.Label</option>
+            }
+        </select>
+        <input class="search-input meta-search" type="search" placeholder="Search @Plural…" aria-label="Search @Plural"
+               value="@search" @oninput="e => SetSearch((string?)e.Value)" />
+        <span class="meta-count">@shown.Count @Plural</span>
+    </div>
+
+    <div class="lb-row lb-head" aria-hidden="true">
+        <span class="lb-rank">#</span>
+        <span class="lb-name">@Singular</span>
+        <span class="lb-n" title="1st place">🥇</span>
+        <span class="lb-n" title="2nd place">🥈</span>
+        <span class="lb-n" title="3rd place">🥉</span>
+        <span class="lb-n">Total</span>
+        <span class="lb-score">Score</span>
+        <span class="lb-move" title="Change against the previous period">+/−</span>
+    </div>
+    <ol class="leaderboard" aria-label="@view ranked by score">
+        @foreach (var r in shown.Take(limit))
+        {
+            var open = expanded.Contains(r.Name);
+            <li class="lb-entry @(open ? "open" : "")" @key="r.Name">
+                @if (HasDetail)
+                {
+                    <button class="lb-row" aria-expanded="@(open ? "true" : "false")" aria-label="@Spoken(r)" @onclick="() => Toggle(r.Name)">@RowCells(r)</button>
+                }
+                else
+                {
+                    <div class="lb-row" aria-label="@Spoken(r)">@RowCells(r)</div>
+                }
+                @if (open)
+                {
+                    <div class="lb-detail">
+                        <h3>@(view == MetaView.Decks ? "Exact line-ups run with this deck" : $"Top combos with this {Singular.ToLowerInvariant()}")</h3>
+                        <ol class="lb-combos">
+                            @foreach (var (c, i) in board.CombosFor(view, window, r.Name).Select((c, i) => (c, i)))
+                            {
+                                <li>
+                                    <code>@foreach (var (combo, j) in c.Name.Split(" + ").Select((combo, j) => (combo, j)))
+                                    {
+                                        @(j > 0 ? " + " : "")<span class="combo">@combo</span>
+                                    }</code>
+                                    @if (i == 0) { <span class="badge best">best</span> }
+                                    <span class="lb-combo-n">🥇@c.First 🥈@c.Second 🥉@c.Third · score <b>@c.Score</b></span>
+                                </li>
+                            }
+                        </ol>
+                    </div>
+                }
+            </li>
+        }
+    </ol>
+
+    @if (shown.Count > limit)
+    {
+        <div class="meta-more"><button class="btn" @onclick="() => limit += PageSize">Show @Math.Min(PageSize, shown.Count - limit) more</button></div>
+    }
+
+    <p class="muted meta-note">
+        Score = 3 × 1st + 2 × 2nd + 1 × 3rd. Movement compares the chosen period with the one of the same length before it.
+        Results come from the <a href="@WboThreadUrl" target="_blank" rel="noopener">Winning Combinations thread</a> on the World Beyblade Organization forum.
+    </p>
+}
+
+<SiteFooter />
+
+@code {
+    private const int PageSize = 25;
+    private const string WboThreadUrl = "https://worldbeyblade.org/Thread-Winning-Combinations-at-WBO-Organized-Events-Beyblade-X-BBX";
+
+    private MetaLeaderboard? board;
+    private string? error;
+    private MetaView view = MetaView.Blades;
+    private string window = MetaLeaderboard.DefaultWindow;
+    private string? search;
+    private int limit = PageSize;
+    private readonly HashSet<string> expanded = [];
+    /// <summary>The ranking for the current view and window, recomputed only when either changes.</summary>
+    private IReadOnlyList<MetaRow> rows = [];
+    private List<MetaRow> Shown => string.IsNullOrWhiteSpace(search)
+        ? rows.ToList()
+        : rows.Where(r => r.Name.Contains(search.Trim(), StringComparison.OrdinalIgnoreCase)).ToList();
+
+    private bool HasDetail => view != MetaView.Combos;
+    private string Plural => view.ToString().ToLowerInvariant();
+    private string Singular => view == MetaView.Decks ? "Deck" : view.ToString().TrimEnd('s');
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var data = await Http.GetFromJsonAsync<List<MetaAppearance>>("data/meta/appearances.json") ?? [];
+            board = new MetaLeaderboard(data);
+            if (board.Anchor is null) window = "all";
+            Recompute();
+        }
+        catch (HttpRequestException)
+        {
+            error = "Tournament results could not be loaded. Try again later.";
+        }
+    }
+
+    private void Recompute()
+    {
+        rows = board!.Rank(view, window);
+        expanded.Clear();
+        limit = PageSize;
+    }
+
+    private void SetView(MetaView v)
+    {
+        if (v == view) return;
+        view = v;
+        Recompute();
+    }
+
+    private void SetWindow(string w)
+    {
+        window = w;
+        Recompute();
+    }
+
+    private void SetSearch(string? text)
+    {
+        search = text;
+        limit = PageSize;
+    }
+
+    private void Toggle(string name)
+    {
+        if (!HasDetail) return;
+        if (!expanded.Remove(name)) expanded.Add(name);
+    }
+
+    private static string MoveClass(MetaRow r) => r.IsNew ? "new" : r.Delta > 0 ? "up" : r.Delta < 0 ? "down" : "";
+
+    private static string MoveText(MetaRow r) => r.IsNew ? "new" : r.Delta switch { > 0 and var d => $"▲{d}", < 0 and var d => $"▼{-d}", _ => "–" };
+
+    private static string Spoken(MetaRow r) =>
+        $"{r.Rank}. {r.Name}: score {r.Score}, {r.First} first, {r.Second} second, {r.Third} third" +
+        (r.IsNew ? ", new" : r.Delta switch { > 0 and var d => $", up {d}", < 0 and var d => $", down {-d}", _ => "" });
+
+    private static RenderFragment RowCells(MetaRow r) =>
+        @<text>
+            <span class="lb-rank">@r.Rank</span>
+            <span class="lb-name">@r.Name</span>
+            <span class="lb-n">@r.First</span>
+            <span class="lb-n">@r.Second</span>
+            <span class="lb-n">@r.Third</span>
+            <span class="lb-n">@r.Total</span>
+            <span class="lb-score">@r.Score</span>
+            <span class="lb-move @MoveClass(r)">@MoveText(r)</span>
+            <span class="lb-sub">🥇@r.First 🥈@r.Second 🥉@r.Third · @r.Total top-3</span>
+        </text>;
+}

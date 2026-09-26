@@ -1,0 +1,68 @@
+name: Index meta
+
+# Every other day, fetch new pages of the WBO "Winning Combinations" thread and commit the refreshed leaderboard
+# data. The push to main triggers the Cloudflare build that deploys it.
+on:
+  schedule:
+    - cron: "17 3 */2 * *" # 03:17 UTC every other day
+  workflow_dispatch:
+
+permissions:
+  contents: write # push the data commit and update the release that stores the database
+
+concurrency:
+  group: meta-index
+  cancel-in-progress: false
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      DB_RELEASE: meta-db
+      INDEXER_DB: meta/data/beyblade-meta.db
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      # The indexer's SQLite state (which posts are already in) lives in a release asset, not in git, because it
+      # is rewritten on every run. Without it the indexer starts again from page 100, which only costs credits.
+      - name: Restore indexer database
+        run: |
+          mkdir -p meta/data
+          gh release download "$DB_RELEASE" --pattern beyblade-meta.db --dir meta/data \
+            || echo "No saved database; indexing from scratch."
+
+      # Fetches only pages newer than the database through ZenRows. On failure the exports are left alone
+      # unless something new was ingested first.
+      - name: Run indexer
+        run: dotnet run --project meta/BeybladeMeta.Indexer -c Release
+        env:
+          SCRAPER_API_KEY: ${{ secrets.SCRAPER_API_KEY }}
+          INDEXER_OUT: wwwroot/data/meta
+          INDEXER_MIN_PAGE: 100
+          INDEXER_CONCURRENCY: 5
+
+      - name: Save indexer database
+        if: always()
+        run: |
+          [ -f "$INDEXER_DB" ] || exit 0
+          gh release view "$DB_RELEASE" > /dev/null 2>&1 \
+            || gh release create "$DB_RELEASE" --title "Meta indexer database" --latest=false \
+                 --notes "SQLite state of meta/BeybladeMeta.Indexer, updated by the Index meta workflow. Not a release of Beydle."
+          gh release upload "$DB_RELEASE" "$INDEXER_DB" --clobber
+
+      - name: Commit updated data
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add wwwroot/data/meta
+          if ! git diff --cached --quiet; then
+            git commit -m "Update meta leaderboard data"
+            git pull --rebase
+            git push
+          fi

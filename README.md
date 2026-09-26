@@ -4,6 +4,8 @@ A daily Wordle-style guessing game for Beyblade X blades, built with Blazor WebA
 
 One blade is chosen per day (midnight Europe/Berlin). Every guess shows how it compares with the hidden blade across type, spin direction, blade weight, product line, the stock ratchet and bit, release year and anime owner. Unlimited guesses. A counter shows how many blades still fit every hint so far, and after the solve the page compares the player with Beydle Bot, a greedy solver (see `Services/Deduction.cs`). Xtreme mode only accepts guesses that fit all hints so far; it can be switched on before the first guess and off at any time. Solving it unlocks round 2: a second, different blade shown as a silhouette that sharpens with every wrong guess. Results can be shared as text or as an image. Stats and today's guesses are kept in the browser's local storage. Seventeen hidden achievements (see `Services/Achievements.cs`) pop up Steam-style when found and are listed in the statistics dialog. A practice mode plays both rounds with random blades without touching the daily stats.
 
+`/meta` is a second page: a leaderboard of the blades, combos, ratchets, bits and three-blade decks that finish top 3 at World Beyblade Organization events (see [Meta leaderboard](#meta-leaderboard)).
+
 ## Run locally
 
 ```bash
@@ -15,8 +17,10 @@ Then open http://localhost:5181.
 ## Tests
 
 ```bash
-dotnet test
+dotnet test Beydle.sln
 ```
+
+This runs the game's tests (`tests/Beydle.Tests`) and the meta indexer's (`meta/BeybladeMeta.Tests`).
 
 ## Deploy
 
@@ -68,6 +72,22 @@ curl "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/analy
 ```
 
 Other useful queries: daily players (`double1 = 1 AND blob2 = '1'`, grouped by `index1`), average guesses to solve (`AVG(double1)` where `blob4 = 'solved'`), and the most common first guess (`double1 = 1`, grouped by `blob3`).
+
+## Meta leaderboard
+
+`meta/` holds the indexer that feeds `/meta`, merged in from the former BeybladeMeta project. `BeybladeMeta.Core` parses posts of the WBO ["Winning Combinations" thread](https://worldbeyblade.org/Thread-Winning-Combinations-at-WBO-Organized-Events-Beyblade-X-BBX) into canonical combos, and `BeybladeMeta.Indexer` fetches new thread pages through ZenRows (which gets past the forum's Cloudflare check), stores them in SQLite and exports `wwwroot/data/meta/appearances.json`: one row per combo in a top-3 finish, with its placement, event date and a deck id grouping one player's three combos. No player names are stored. The page ranks that file in the browser (`Services/MetaLeaderboard.cs`, score 3/2/1 for 1st/2nd/3rd), and the Worker serves `/meta` with its own title and description.
+
+`.github/workflows/meta-index.yml` runs the indexer every other day and commits the refreshed JSON, which triggers the Cloudflare deploy. It needs the repository secret `SCRAPER_API_KEY`. The SQLite database is rewritten on every run, so it is kept out of git as the asset `beyblade-meta.db` of the release `meta-db`, which the workflow downloads before and uploads after each run. Without it the indexer starts again from page 100 of the thread.
+
+The indexer also writes `unmatched.json`: result lines inside a 1st/2nd/3rd block that did not match the parts vocabulary, usually a new part or a typo. It is excluded from the published site. To work on the parser, download the database into `meta/data/` (ignored by git) and run:
+
+```bash
+gh release download meta-db --pattern beyblade-meta.db --dir meta/data
+# Re-export from the database without fetching:
+EXPORT_ONLY=1 INDEXER_DB=meta/data/beyblade-meta.db INDEXER_OUT=wwwroot/data/meta dotnet run --project meta/BeybladeMeta.Indexer
+# Re-parse the existing exports with the current parser, recovering unmatched lines:
+REPROCESS=1 INDEXER_OUT=wwwroot/data/meta dotnet run --project meta/BeybladeMeta.Indexer
+```
 
 ## Cheating
 
