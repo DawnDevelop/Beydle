@@ -50,6 +50,23 @@ public class DailyPickerTests
         }
     }
 
+    [Theory]
+    [InlineData(10)]
+    [InlineData(75)]
+    [InlineData(79)]
+    public void ImageBladeNeverRepeatsOnConsecutiveDays(int size)
+    {
+        var pool = Pool.Concat(Enumerable.Range(75, 10).Select(i => Make($"b{i}"))).Take(size).ToList();
+        var day = new DateOnly(2026, 1, 1);
+        var previous = DailyPicker.PickImage(pool, day.AddDays(-1));
+        for (var i = 0; i < 365 * 30; i++, day = day.AddDays(1))
+        {
+            var image = DailyPicker.PickImage(pool, day);
+            Assert.NotSame(previous, image);
+            previous = image;
+        }
+    }
+
     [Fact]
     public void ImageBladeWithTwoBladePoolAlwaysTakesTheOtherOne()
     {
@@ -141,13 +158,15 @@ public class DailyPickerTests
     [Fact]
     public void CommittedScheduleMatchesTheGeneratorForTheCurrentCatalogue()
     {
-        // Guards the JS port in tools/build-schedule.js against drifting from the C# generator.
+        // Guards the JS port in tools/build-schedule.js against drifting from the C# generator. Only the tail of the
+        // file is checked: build-schedule.js keeps past days as they were, so they reflect an older catalogue once a
+        // blade is added.
         var root = FindRepoRoot();
         var json = new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web);
         var blades = System.Text.Json.JsonSerializer.Deserialize<List<Blade>>(File.ReadAllText(Path.Combine(root, "wwwroot", "data", "blades.json")), json)!;
         var schedule = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string[]>>(File.ReadAllText(Path.Combine(root, "wwwroot", "data", "schedule.json")))!;
         Assert.True(schedule.Count > 365);
-        foreach (var (k, v) in schedule.Take(400))
+        foreach (var (k, v) in schedule.TakeLast(400))
         {
             var day = DateOnly.Parse(k);
             Assert.Equal(ScheduleHash.For(day, DailyPicker.Pick(blades, day).Id), v[0]);

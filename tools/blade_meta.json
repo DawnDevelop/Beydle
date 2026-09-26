@@ -18,6 +18,10 @@
   "owner": "Six Cross",
   "date": "June 13th, 2026"
  },
+ "bucks-antlers": {
+  "owner": null,
+  "date": "July 9th, 2026"
+ },
  "bullet-griffon": {
   "owner": "Two Cross",
   "date": "April 25th, 2026"
@@ -107,6 +111,10 @@
   "owner": "BIRD KAZAMI",
   "date": "July 15th, 2023"
  },
+ "hornet-fort": {
+  "owner": null,
+  "date": "July 9th, 2026"
+ },
  "impact-drake": {
   "owner": "Khrome Ryugu",
   "date": "December 28th, 2024"
@@ -126,6 +134,10 @@
  "knight-shield": {
   "owner": "MULTI NANAIRO",
   "date": "July 15th, 2023"
+ },
+ "kraken-wriggle": {
+  "owner": null,
+  "date": "July 9th, 2026"
  },
  "leon-claw": {
   "owner": "KING MANJU",
@@ -149,6 +161,10 @@
  "mummy-curse": {
   "owner": "Five Kurosu",
   "date": "December 27th, 2025"
+ },
+ "orochi-cluster": {
+  "owner": "Jaxon Cross",
+  "date": "January 21st, 2026"
  },
  "pegasus-blast": {
   "owner": "OMEGA SHIROBOSHI",

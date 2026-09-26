@@ -1030,5 +1030,53 @@
   "atk": 50,
   "def": 20,
   "sta": 30
+ },
+ {
+  "name": "Orochi Cluster",
+  "tt": "OrochiCluster",
+  "hasbro": "Coil Orochi",
+  "code": "UX-00",
+  "type": "Attack",
+  "spin": "Right",
+  "weight": 36.6,
+  "atk": 65,
+  "def": 15,
+  "sta": 20
+ },
+ {
+  "name": "Kraken Wriggle",
+  "tt": "KrakenWriggle",
+  "hasbro": "Wriggle Kraken",
+  "code": "CX-00",
+  "type": "Stamina",
+  "spin": "Right",
+  "weight": 35.7,
+  "atk": 28,
+  "def": 22,
+  "sta": 50
+ },
+ {
+  "name": "Hornet Fort",
+  "tt": "HornetFort",
+  "hasbro": "Fort Hornet",
+  "code": "CX-00",
+  "type": "Balance",
+  "spin": "Right",
+  "weight": 35.4,
+  "atk": 34,
+  "def": 22,
+  "sta": 44
+ },
+ {
+  "name": "Bucks Antlers",
+  "tt": "BucksAntlers",
+  "hasbro": "Antler Stag",
+  "code": "CX-00",
+  "type": "Defense",
+  "spin": "Right",
+  "weight": 36.1,
+  "atk": 18,
+  "def": 35,
+  "sta": 47
  }
 ]

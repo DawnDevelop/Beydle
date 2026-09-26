@@ -109,6 +109,29 @@
   "owner": "Six Cross"
  },
  {
+  "id": "bucks-antlers",
+  "name": "Bucks Antlers",
+  "aliases": [
+   "Antler Stag"
+  ],
+  "code": "CX-00",
+  "line": "CX",
+  "type": "Defense",
+  "spin": "Right",
+  "weight": 36.1,
+  "atk": 18,
+  "def": 35,
+  "sta": 47,
+  "ratchet": "2-60",
+  "bit": "Dot",
+  "bitAbbr": "D",
+  "bitType": "Defense",
+  "image": "img/blades/b9adfa99f213aa42.webp",
+  "year": 2026,
+  "released": "2026-07-09",
+  "owner": null
+ },
+ {
   "id": "bullet-griffon",
   "name": "Bullet Griffon",
   "aliases": [
@@ -633,6 +656,29 @@
   "owner": "Bird Kazami"
  },
  {
+  "id": "hornet-fort",
+  "name": "Hornet Fort",
+  "aliases": [
+   "Fort Hornet"
+  ],
+  "code": "CX-00",
+  "line": "CX",
+  "type": "Balance",
+  "spin": "Right",
+  "weight": 35.4,
+  "atk": 34,
+  "def": 22,
+  "sta": 44,
+  "ratchet": "7-60",
+  "bit": "Taper",
+  "bitAbbr": "T",
+  "bitType": "Attack",
+  "image": "img/blades/de06461f06fcf88c.webp",
+  "year": 2026,
+  "released": "2026-07-09",
+  "owner": null
+ },
+ {
   "id": "impact-drake",
   "name": "Impact Drake",
   "aliases": [],
@@ -742,6 +788,29 @@
   "year": 2023,
   "released": "2023-07-15",
   "owner": "Multi Nana-iro"
+ },
+ {
+  "id": "kraken-wriggle",
+  "name": "Kraken Wriggle",
+  "aliases": [
+   "Wriggle Kraken"
+  ],
+  "code": "CX-00",
+  "line": "CX",
+  "type": "Stamina",
+  "spin": "Right",
+  "weight": 35.7,
+  "atk": 28,
+  "def": 22,
+  "sta": 50,
+  "ratchet": "3-70",
+  "bit": "Orb",
+  "bitAbbr": "O",
+  "bitType": "Stamina",
+  "image": "img/blades/8fd2348c67ae2ca5.webp",
+  "year": 2026,
+  "released": "2026-07-09",
+  "owner": null
  },
  {
   "id": "leon-claw",
@@ -878,6 +947,29 @@
   "year": 2025,
   "released": "2025-12-27",
   "owner": "Five Cross"
+ },
+ {
+  "id": "orochi-cluster",
+  "name": "Orochi Cluster",
+  "aliases": [
+   "Coil Orochi"
+  ],
+  "code": "UX-00",
+  "line": "UX",
+  "type": "Attack",
+  "spin": "Right",
+  "weight": 36.6,
+  "atk": 65,
+  "def": 15,
+  "sta": 20,
+  "ratchet": "6-60",
+  "bit": "Low Flat",
+  "bitAbbr": "LF",
+  "bitType": "Attack",
+  "image": "img/blades/6a572776461672d6.webp",
+  "year": 2026,
+  "released": "2026-01-21",
+  "owner": "Jaxon Cross"
  },
  {
   "id": "pegasus-blast",

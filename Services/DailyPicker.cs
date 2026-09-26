@@ -66,6 +66,8 @@ public static class DailyPicker
     /// <summary>
     /// The second (image) puzzle of the day: a different blade, drawn from the same shuffled cycles but read
     /// from a fixed offset so it is just as evenly distributed and never equals the first blade of the day.
+    /// When the offset position holds the first blade, a blade from half a cycle further on stands in, one that is not
+    /// the image of the day before or after, so the same silhouette never shows on two consecutive days (given 4 or more blades).
     /// </summary>
     public static Blade PickImage(IReadOnlyList<Blade> blades, DateOnly day)
     {
@@ -73,13 +75,31 @@ public static class DailyPicker
         if (count == 1) return blades[0];
         var first = Pick(blades, day);
         if (count == 2) return blades[0].Id == first.Id ? blades[1] : blades[0];
-        var n = DayNumber(day) + ImageOffset;
-        for (var attempt = 0; attempt < count; attempt++, n++)
+        return ImageAt(blades, DayNumber(day));
+    }
+
+    // The stand-in avoids yesterday's actual image and tomorrow's regular one; if tomorrow needs a stand-in as well,
+    // that one avoids today's. Yesterday's image only recurses further while days in a row need stand-ins.
+    private static Blade ImageAt(IReadOnlyList<Blade> blades, int day)
+    {
+        var count = blades.Count;
+        var first = AtPosition(blades, day);
+        var n = day + ImageOffset;
+        var regular = AtPosition(blades, n);
+        if (regular.Id != first.Id) return regular;
+        var yesterday = ImageAt(blades, day - 1).Id;
+        var tomorrow = AtPosition(blades, n + 1).Id;
+        Blade? any = null, fallback = null;
+        for (var k = n + count / 2; k < n + count / 2 + 2 * count; k++) // two cycles' worth covers the whole pool
         {
-            var candidate = AtPosition(blades, n);
-            if (candidate.Id != first.Id) return candidate;
+            var candidate = AtPosition(blades, k);
+            if (candidate.Id == first.Id) continue;
+            any ??= candidate;
+            if (candidate.Id == yesterday) continue;
+            if (candidate.Id != tomorrow) return candidate;
+            fallback ??= candidate;
         }
-        return first;
+        return fallback ?? any ?? first;
     }
 
     private const int ImageOffset = 7919;

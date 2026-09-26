@@ -28,7 +28,7 @@ Pushing to `main` triggers a Cloudflare Workers Build, which publishes the app a
 
 Build settings in the Cloudflare dashboard (Worker → Settings → Build):
 
-- Build command: `curl -sSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh && bash dotnet-install.sh --channel 10.0 --install-dir ./.dotnet && ./.dotnet/dotnet publish Beydle.csproj -c Release -o output`
+- Build command: `curl -sSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh && bash dotnet-install.sh --channel 10.0 --install-dir ./.dotnet && ./.dotnet/dotnet test Beydle.sln && ./.dotnet/dotnet publish Beydle.csproj -c Release -o output` (a failing test stops the deploy)
 - Deploy command: `npx wrangler deploy`
 
 ## Tooling
@@ -58,7 +58,7 @@ Build settings in the Cloudflare dashboard (Worker → Settings → Build):
 
 ## How the daily pick works
 
-`wwwroot/data/schedule.json` maps every date to hashes of its two blade ids (`SHA-256(salt|date|id)`, see `ScheduleHash`) and is the source of truth; the app hashes each candidate for the day and takes the match. Days missing from the file fall back to the generator in `DailyPicker`, which is also what `tools/build-schedule.js` uses to fill the file: days are grouped into cycles of `pool size` days, each cycle a seeded shuffle of the whole pool, so every blade appears once per cycle and never on two consecutive days. The round-2 blade reads the same sequence from a fixed offset and skips the day's round-1 blade. There is no server: every visitor reads the same schedule. Because past and current days are kept when the schedule is regenerated, adding blades never changes a day that is already live.
+`wwwroot/data/schedule.json` maps every date to hashes of its two blade ids (`SHA-256(salt|date|id)`, see `ScheduleHash`) and is the source of truth; the app hashes each candidate for the day and takes the match. Days missing from the file fall back to the generator in `DailyPicker`, which is also what `tools/build-schedule.js` uses to fill the file: days are grouped into cycles of `pool size` days, each cycle a seeded shuffle of the whole pool, so every blade appears once per cycle and never on two consecutive days. The round-2 blade reads the same sequence from a fixed offset and skips the day's round-1 blade. There is no server: every visitor reads the same schedule. Because past and current days are kept when the schedule is regenerated, adding blades never changes a day that is already live. A new pool size moves every future cycle boundary, so after a catalogue change the script fills the days up to the next boundary with the blades not shown for longest, new blades included, each once; regular cycles follow from there. This keeps a blade from coming back weeks early, and every new blade appears within one cycle. Run the script on the day you commit: if a day has passed since the file was last generated, first restore it with `git checkout wwwroot/data/schedule.json` so the day that is now live is kept as players saw it.
 
 ## Stats
 

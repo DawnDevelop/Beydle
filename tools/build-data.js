@@ -154,6 +154,10 @@ const COMBOS = {
   "Shark Gill":       { code: "CX-11", ratchet: "5-60", bit: "FB" },
   "Phoenix Flare":    { code: "CX-12", ratchet: "9-80", bit: "WW" },
   "Leon Fang":        { code: "CX-00", ratchet: "4-60", bit: "A" },
+  "Orochi Cluster":   { code: "UX-00", ratchet: "6-60", bit: "LF" },
+  "Kraken Wriggle":   { code: "CX-00", ratchet: "3-70", bit: "O" },
+  "Hornet Fort":      { code: "CX-00", ratchet: "7-60", bit: "T" },
+  "Bucks Antlers":    { code: "CX-00", ratchet: "2-60", bit: "D" },
 };
 
 // Entries still awaiting verification are listed here and skipped until filled.
