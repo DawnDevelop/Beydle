@@ -8,7 +8,7 @@ One blade is chosen per day (midnight Europe/Berlin). Every guess shows how it c
 
 ```bash
 dotnet run
-```
+``` 
 
 Then open http://localhost:5181.
 
