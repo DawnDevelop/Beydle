@@ -1,3 +1,21 @@
+/* Self-hosted Latin subsets of the Inter and JetBrains Mono variable fonts (SIL OFL 1.1), taken from Google Fonts.
+   The version in each file name must change when a file is replaced, because /fonts/* is cached as immutable. */
+@font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 400 800;
+    font-display: swap;
+    src: url("../fonts/inter-latin-v20.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "JetBrains Mono";
+    font-style: normal;
+    font-weight: 500 700;
+    font-display: swap;
+    src: url("../fonts/jetbrains-mono-latin-v24.woff2") format("woff2");
+}
+
 :root {
     --bg: #0b0d14;
     --bg-2: #11141f;
