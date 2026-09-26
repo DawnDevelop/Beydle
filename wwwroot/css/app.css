@@ -683,6 +683,36 @@ button.lb-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 
 .lb-combo-n b { color: var(--text); font-family: var(--mono); }
 .badge.best { background: rgba(34, 181, 115, .18); color: var(--exact); }
 .meta-more { display: flex; justify-content: center; margin-top: 14px; }
+/* Blades view: the row button and a link to the blade's page side by side; the drill-down spans both. */
+.lb-entry.with-open { display: grid; grid-template-columns: minmax(0, 1fr) 44px; align-items: center; }
+.lb-entry.with-open .lb-detail { grid-column: 1 / -1; }
+.lb-head.with-open { padding-right: 59px; }
+.lb-open {
+    display: grid; place-items: center;
+    width: 32px; height: 32px; margin-right: 12px; border-radius: 8px;
+    color: var(--muted); text-decoration: none;
+}
+a.lb-open { border: 1px solid var(--border); background: var(--bg-2); }
+a.lb-open:hover { color: var(--text); border-color: var(--accent); }
+a.lb-open:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.lb-page-link { display: inline-block; margin-top: 10px; font-size: 14px; font-weight: 600; text-decoration: none; }
+.lb-page-link:hover { text-decoration: underline; }
+
+/* ---------- blade page ---------- */
+.crumbs { margin: 0 0 6px; color: var(--muted); font-size: 13px; }
+.crumbs a { color: var(--muted); }
+.crumbs a:hover { color: var(--text); }
+.blade-img {
+    display: block; width: 140px; height: 140px; margin: 4px auto 8px;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 24px rgba(91, 140, 255, .35));
+}
+.blade-toolbar { justify-content: center; }
+.blade-stats { max-width: 880px; margin: 0 auto 8px; }
+.blade-stats b small { margin-left: 6px; font-size: 13px; font-weight: 700; vertical-align: middle; }
+.blade-section { max-width: 880px; margin: 18px auto 0; }
+.blade-parts { max-width: 880px; margin: 0 auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; }
+.blade-parts .blade-section { margin: 18px 0 0; } /* auto margins would shrink a grid item to its content */
 .meta-note { max-width: 880px; margin: 20px auto 0; text-align: center; font-size: 13px; }
 
 /* ---------- footer ---------- */
@@ -710,6 +740,11 @@ button.lb-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 
     .lb-sub { display: block; grid-area: sub; color: var(--muted); font-size: 12px; }
     .lb-head { padding: 4px 13px; }
     .lb-detail { padding: 2px 12px 12px; }
+    .blade-parts { grid-template-columns: minmax(0, 1fr); }
+    .lb-entry.with-open { grid-template-columns: minmax(0, 1fr) 40px; }
+    .lb-head.with-open { padding-right: 53px; }
+    .lb-open { margin-right: 8px; }
+    .blade-img { width: 112px; height: 112px; }
 }
 
 /* Small phones: logo, page link, streak and help still fit on one line. */

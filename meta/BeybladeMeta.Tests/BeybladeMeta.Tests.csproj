@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BeybladeMeta.Core\BeybladeMeta.Core.csproj" />
+    <ProjectReference Include="..\BeybladeMeta.Indexer\BeybladeMeta.Indexer.csproj" />
   </ItemGroup>
 
 </Project>

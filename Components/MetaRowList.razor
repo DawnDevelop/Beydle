@@ -1,0 +1,20 @@
+@* A short ranked list of combos, parts or decks with their placements, best first. A deck's three combos wrap
+   between combos, never inside one. *@
+<ol class="lb-combos">
+    @foreach (var (r, i) in Rows.Take(Limit).Select((r, i) => (r, i)))
+    {
+        <li>
+            <code>@foreach (var (part, j) in r.Name.Split(" + ").Select((part, j) => (part, j)))
+            {
+                @(j > 0 ? " + " : "")<span class="combo">@part</span>
+            }</code>
+            @if (i == 0) { <span class="badge best">best</span> }
+            <span class="lb-combo-n">🥇@r.First 🥈@r.Second 🥉@r.Third · score <b>@r.Score</b></span>
+        </li>
+    }
+</ol>
+
+@code {
+    [Parameter, EditorRequired] public IReadOnlyList<MetaRow> Rows { get; set; } = [];
+    [Parameter] public int Limit { get; set; } = int.MaxValue;
+}

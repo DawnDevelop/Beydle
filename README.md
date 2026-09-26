@@ -36,6 +36,7 @@ Build settings in the Cloudflare dashboard (Worker → Settings → Build):
 | Script | Purpose |
 | --- | --- |
 | `node tools/build-data.js` | Rebuilds `wwwroot/data/blades.json` from `tools/blades_raw.json` and `tools/blade_meta.json` (owner and release date reference data) plus the verified stock combos inside the script. Also renames blade images to their hashed file names. |
+| `node tools/build-og-cards.js` | Renders the link-preview card (`wwwroot/img/og/meta/{slug}.jpg`) of every blade page that has none yet; `--all` redoes them all. Needs `npm install --no-save puppeteer-core@23` and Chrome or Edge (`CHROME_PATH`). The Index meta workflow runs it after each indexing run. |
 | `node tools/build-schedule.js` | Extends `wwwroot/data/schedule.json` from tomorrow onwards. Run it after adding a blade so the new blade enters the rotation without changing any day players may already be on. |
 
 ## Data
@@ -76,6 +77,8 @@ Other useful queries: daily players (`double1 = 1 AND blob2 = '1'`, grouped by `
 ## Meta leaderboard
 
 `meta/` holds the indexer that feeds `/meta`, merged in from the former BeybladeMeta project. `BeybladeMeta.Core` parses posts of the WBO ["Winning Combinations" thread](https://worldbeyblade.org/Thread-Winning-Combinations-at-WBO-Organized-Events-Beyblade-X-BBX) into canonical combos, and `BeybladeMeta.Indexer` fetches new thread pages through ZenRows (which gets past the forum's Cloudflare check), stores them in SQLite and exports `wwwroot/data/meta/appearances.json`: one row per combo in a top-3 finish, with its placement, event date and a deck id grouping one player's three combos. No player names are stored. The page ranks that file in the browser (`Services/MetaLeaderboard.cs`, score 3/2/1 for 1st/2nd/3rd), and the Worker serves `/meta` with its own title and description.
+
+Every blade with at least 5 top-3 finishes also gets a page at `/meta/{slug}` (for example `/meta/sharkscale`): its rank, score and placements, best combos, ratchets, bits and the decks it was in. The exporter writes the list of these blades to `wwwroot/data/meta/blade-pages.json` (`meta/BeybladeMeta.Indexer/BladePages.cs`), with the render of the game blade whose name or alias matches, read from `wwwroot/data/blades.json` (never for CX blades, whose meta name is only the main blade); a blade added to the game gets its picture at the next indexer run. The site links to the pages from a button on each row of the Blades ranking and shows the picture, and the Worker titles each page, answers 404 for any other slug and lists them all in `/sitemap-meta.xml`. Link previews of a blade page use its card from `tools/build-og-cards.js` (the blade's render, or a podium for CX blades), falling back to the meta page's image. Rarer names are mostly parsing noise, so they get no page.
 
 `.github/workflows/meta-index.yml` runs the indexer every other day and commits the refreshed JSON, which triggers the Cloudflare deploy. It needs the repository secret `SCRAPER_API_KEY`. The SQLite database is rewritten on every run, so it is kept out of git as the asset `beyblade-meta.db` of the release `meta-db`, which the workflow downloads before and uploads after each run. Without it the indexer starts again from page 100 of the thread.
 

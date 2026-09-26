@@ -1,0 +1,16 @@
+@* Shown on a meta page until the tournament data is there: the spinning blade, or why it could not load. *@
+@if (Failed)
+{
+    <p class="loading" role="status">Tournament results could not be loaded. Try again later.</p>
+}
+else
+{
+    <div class="loading" role="status">
+        <BladeSpinner />
+        <p>Loading tournament results…</p>
+    </div>
+}
+
+@code {
+    [Parameter] public bool Failed { get; set; }
+}

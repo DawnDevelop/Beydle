@@ -1,0 +1,118 @@
+@page "/meta/{Slug}"
+@inject MetaService MetaData
+
+<PageTitle>@(bladePage is null ? "Beyblade X tournament meta" : $"{bladePage.Name}: best combos and tournament results") - Beydle</PageTitle>
+
+<TopBar OnMetaPage="true" />
+
+<section class="intro">
+    <p class="crumbs"><a href="meta">Tournament meta</a> › Blades</p>
+    @if (bladePage?.Image is { } image)
+    {
+        <img class="blade-img" src="@image" alt="@bladePage.Name" width="140" height="140" />
+    }
+    <h1 class="tagline"><strong>@(bladePage?.Name ?? "Blade")</strong> in the Beyblade X meta</h1>
+    <MetaSubtitle Through="@(loaded == true ? board.Anchor : null)" />
+</section>
+
+@if (loaded != true)
+{
+    <MetaLoading Failed="loaded == false" />
+}
+else if (bladePage is null)
+{
+    <p class="loading">There is no page for this blade. <a href="meta">See all blades</a>.</p>
+}
+else
+{
+    var name = bladePage.Name;
+    <div class="meta-toolbar blade-toolbar">
+        <MetaWindowSelect Value="@window" ValueChanged="SetWindow" />
+    </div>
+
+    var row = board.Rank(MetaView.Blades, window).FirstOrDefault(r => r.Name == name);
+    @if (row is null)
+    {
+        <p class="muted meta-note">@name has no top-3 finishes in this period. Try a longer one.</p>
+    }
+    else
+    {
+        <div class="stats-grid blade-stats">
+            <div>
+                <b>#@row.Rank
+                    @if (row.Delta is not null || row.IsNew)
+                    {
+                        <small class="lb-move @row.Trend">@row.TrendText</small>
+                    }
+                </b><span>Blade rank</span>
+            </div>
+            <div><b>@row.Score</b><span>Score</span></div>
+            <div><b>@row.Total</b><span>Top-3 finishes</span></div>
+            <div><b>🥇 @row.First</b><span>🥈 @row.Second · 🥉 @row.Third</span></div>
+        </div>
+
+        <section class="blade-section">
+            <h2 class="board-title">Best @name combos</h2>
+            @{ var combos = board.Rank(MetaView.Combos, window, name); }
+            <MetaRowList Rows="combos" Limit="comboLimit" />
+            @if (combos.Count > comboLimit)
+            {
+                <div class="meta-more"><button class="btn" @onclick="() => comboLimit += MoreCombos">Show @Math.Min(MoreCombos, combos.Count - comboLimit) more</button></div>
+            }
+        </section>
+        <div class="blade-parts">
+            <section class="blade-section">
+                <h2 class="board-title">Ratchets</h2>
+                <MetaRowList Rows="board.Rank(MetaView.Ratchets, window, name)" Limit="5" />
+            </section>
+            <section class="blade-section">
+                <h2 class="board-title">Bits</h2>
+                <MetaRowList Rows="board.Rank(MetaView.Bits, window, name)" Limit="5" />
+            </section>
+        </div>
+        <section class="blade-section">
+            <h2 class="board-title">Decks with @name</h2>
+            @{ var decks = board.Rank(MetaView.Decks, window, name); }
+            @if (decks.Count == 0)
+            {
+                <p class="muted">No complete three-blade decks in this period.</p>
+            }
+            else
+            {
+                <MetaRowList Rows="decks" Limit="5" />
+            }
+        </section>
+    }
+
+    <MetaSourceNote>The rank is among all blades.</MetaSourceNote>
+}
+
+<SiteFooter />
+
+@code {
+    [Parameter] public string Slug { get; set; } = "";
+
+    /// <summary>Null while the data loads, false when it could not.</summary>
+    private bool? loaded;
+    private MetaLeaderboard board => MetaData.Board;
+    /// <summary>The blade this page is about; null when <see cref="Slug"/> has no page.</summary>
+    private MetaBladePage? bladePage;
+    /// <summary>All time by default, so every blade page has something to show.</summary>
+    private string window = "all";
+    /// <summary>The top combos show first; each "Show more" adds <see cref="MoreCombos"/>.</summary>
+    private const int TopCombos = 5, MoreCombos = 10;
+    private int comboLimit = TopCombos;
+
+    private void SetWindow(string w)
+    {
+        window = w;
+        comboLimit = TopCombos;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        comboLimit = TopCombos; // a new blade starts from its top combos
+        loaded = await MetaData.LoadAsync();
+        bladePage = MetaData.Pages.FirstOrDefault(p => p.Slug == Slug);
+    }
+}

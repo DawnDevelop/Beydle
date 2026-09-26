@@ -1,0 +1,12 @@
+<p class="meta">
+    Top-3 finishes at WBO organised events
+    @if (Through is { } through)
+    {
+        <text> · data through @through.ToString("d MMM yyyy")</text>
+    }
+</p>
+
+@code {
+    /// <summary>The newest event in the data; null while it loads.</summary>
+    [Parameter] public DateOnly? Through { get; set; }
+}

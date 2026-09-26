@@ -1,0 +1,9 @@
+@* How the meta pages score, and where the results come from. ChildContent adds a page's own remark. *@
+<p class="muted meta-note">
+    Score = 3 × 1st + 2 × 2nd + 1 × 3rd. @ChildContent Movement compares the chosen period with the one of the same length before it.
+    Results come from the <a href="@MetaService.SourceUrl" target="_blank" rel="noopener">Winning Combinations thread</a> on the World Beyblade Organization forum.
+</p>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

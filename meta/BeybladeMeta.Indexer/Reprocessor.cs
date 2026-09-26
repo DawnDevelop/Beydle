@@ -69,6 +69,7 @@ public static class Reprocessor
         }).ToList();
 
         File.WriteAllText(appPath, JsonSerializer.Serialize(appearances, outOpts));
+        BladePages.Write(dir, appearances.Select(a => a.Blade), outOpts);
         File.WriteAllText(unmPath, JsonSerializer.Serialize(stillUnmatched, outOpts));
         var dated = appearances.Count(a => a.Date is not null);
         Console.WriteLine($"Reprocessed: {appearances.Count} appearances ({recovered} recovered from unmatched, " +

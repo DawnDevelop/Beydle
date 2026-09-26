@@ -82,6 +82,35 @@ public class MetaLeaderboardTests
     }
 
     [Fact]
+    public void ABladeFilterCountsOnlyThatBladesPartsAndDecks()
+    {
+        var board = new MetaLeaderboard([
+            A("Shark", 1, "2026-09-01", deck: 0, ratchet: "1-70"), A("Wizard", 1, "2026-09-01", deck: 0), A("Aero", 1, "2026-09-01", deck: 0),
+            A("Shark", 2, "2026-09-02", ratchet: "9-60"),
+            A("Wizard", 1, "2026-09-02", ratchet: "9-60"), A("Wizard", 1, "2026-09-03", ratchet: "9-60"),
+            A("Cobalt", 3, "2026-09-03", deck: 1), A("Wizard", 3, "2026-09-03", deck: 1), A("Aero", 3, "2026-09-03", deck: 1),
+        ]);
+
+        // Across all blades 1-60 leads and 1-70 is last; on Shark 1-70 leads.
+        Assert.Equal(["1-60", "9-60", "1-70"], board.Rank(MetaView.Ratchets, "all").Select(r => r.Name));
+        Assert.Equal(["1-70", "9-60"], board.Rank(MetaView.Ratchets, "all", "Shark").Select(r => r.Name));
+        Assert.Equal(["Aero + Shark + Wizard"], board.Rank(MetaView.Decks, "all", "Shark").Select(r => r.Name));
+        Assert.Equal(2, board.Rank(MetaView.Decks, "all", "Aero").Count);
+    }
+
+    [Theory]
+    [InlineData(3, false, "up", "▲3", "up 3")]
+    [InlineData(-2, false, "down", "▼2", "down 2")]
+    [InlineData(0, false, "", "–", null)]
+    [InlineData(null, false, "", "–", null)]
+    [InlineData(null, true, "new", "new", "new")]
+    public void MovementIsLabelledByDirection(int? delta, bool isNew, string trend, string text, string? spoken)
+    {
+        var row = new MetaRow("Shark", 1, 0, 0) { Delta = delta, IsNew = isNew };
+        Assert.Equal((trend, text, spoken), (row.Trend, row.TrendText, row.TrendSpoken));
+    }
+
+    [Fact]
     public void UndatedDataIsRankedAsAllTime()
     {
         var board = new MetaLeaderboard([A("Wizard", 1, null!), A("Shark", 2, "not a date")]);

@@ -14,6 +14,12 @@ public sealed record MetaRow(string Name, int First, int Second, int Third)
     public int? Delta { get; init; }
     /// <summary>True when the previous period exists and this entry is not in it.</summary>
     public bool IsNew { get; init; }
+
+    /// <summary>"up", "down", "new" or "" (unchanged or unknown), for styling the movement.</summary>
+    public string Trend => IsNew ? "new" : Delta > 0 ? "up" : Delta < 0 ? "down" : "";
+    public string TrendText => IsNew ? "new" : Delta switch { > 0 and var d => $"▲{d}", < 0 and var d => $"▼{-d}", _ => "–" };
+    /// <summary>The movement for screen readers ("up 3"); null when there is none to tell.</summary>
+    public string? TrendSpoken => IsNew ? "new" : Delta switch { > 0 and var d => $"up {d}", < 0 and var d => $"down {-d}", _ => null };
 }
 
 /// <param name="Cutoff">First day of the period ending on the given day; null means all time.</param>
@@ -39,7 +45,7 @@ public sealed class MetaLeaderboard
     public const string DefaultWindow = "4w";
 
     /// <summary>One player's three combos in one finish. Names are sorted so the same line-up always reads the same.</summary>
-    private sealed record Deck(int Placement, DateOnly? On, string Blades, string Combos);
+    private sealed record Deck(int Placement, DateOnly? On, string[] Members, string Blades, string Combos);
 
     private readonly IReadOnlyList<MetaAppearance> appearances;
     private readonly List<Deck> decks;
@@ -58,20 +64,22 @@ public sealed class MetaLeaderboard
             .Select(g =>
             {
                 var beys = g.ToList();
-                return new Deck(beys[0].Placement, beys[0].On, JoinSorted(beys.Select(b => b.Blade)), JoinSorted(beys.Select(b => b.Display)));
+                var members = beys.Select(b => b.Blade).ToArray();
+                return new Deck(beys[0].Placement, beys[0].On, members, JoinSorted(members), JoinSorted(beys.Select(b => b.Display)));
             })
             .ToList();
     }
 
-    public IReadOnlyList<MetaRow> Rank(MetaView view, string window)
+    /// <param name="blade">Counts only this blade's finishes, for its page: its ratchets, bits, combos and the decks it was in.</param>
+    public IReadOnlyList<MetaRow> Rank(MetaView view, string window, string? blade = null)
     {
         if (view == MetaView.Decks)
         {
-            var (current, prior) = Split(decks, d => d.On, window);
+            var (current, prior) = Split(decks.Where(d => blade is null || d.Members.Contains(blade)), d => d.On, window);
             return RankPairs(current.Select(d => (d.Blades, d.Placement)), prior?.Select(d => (d.Blades, d.Placement)));
         }
         var key = KeyOf(view);
-        var (now, before) = Split(appearances, a => a.On, window);
+        var (now, before) = Split(appearances.Where(a => blade is null || a.Blade == blade), a => a.On, window);
         return RankPairs(Pairs(now, key), before is null ? null : Pairs(before, key));
     }
 

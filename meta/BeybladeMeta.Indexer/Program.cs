@@ -104,6 +104,7 @@ static async Task ExportAsync(MetaDbContext db, string outDir)
     });
     await File.WriteAllTextAsync(Path.Combine(outDir, "appearances.json"),
         JsonSerializer.Serialize(appearances, jsonOptions));
+    BladePages.Write(outDir, appearances.Select(a => a.Blade), jsonOptions);
 
     var unmatched = await db.Unmatched
         .Select(u => new { u.Post!.Page, u.Placement, u.Line })

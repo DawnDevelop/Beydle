@@ -13,5 +13,6 @@ builder.Services.AddScoped<BladeService>();
 builder.Services.AddScoped<StorageService>();
 builder.Services.AddScoped<ShareService>();
 builder.Services.AddScoped<GuessReporter>();
+builder.Services.AddScoped<MetaService>();
 
 await builder.Build().RunAsync();

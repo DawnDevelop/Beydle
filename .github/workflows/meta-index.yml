@@ -46,6 +46,14 @@ jobs:
           INDEXER_MIN_PAGE: 100
           INDEXER_CONCURRENCY: 5
 
+      # Blades that just gained a page get their link-preview card; existing cards are kept.
+      - name: Render preview cards
+        run: |
+          npm install --no-save --no-package-lock puppeteer-core@23
+          node tools/build-og-cards.js
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+
       - name: Save indexer database
         if: always()
         run: |
@@ -60,7 +68,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add wwwroot/data/meta
+          git add wwwroot/data/meta wwwroot/img/og/meta
           if ! git diff --cached --quiet; then
             git commit -m "Update meta leaderboard data"
             git pull --rebase

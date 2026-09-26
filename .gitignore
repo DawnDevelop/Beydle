@@ -6,3 +6,5 @@ publish/
 output/
 .wrangler/
 meta/data/
+node_modules/
+/beyblade-meta.db

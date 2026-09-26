@@ -1,0 +1,12 @@
+<select class="meta-select" aria-label="Time range" value="@Value" @onchange="e => ValueChanged.InvokeAsync((string)e.Value!)">
+    @foreach (var w in MetaLeaderboard.Windows)
+    {
+        <option value="@w.Key">@w.Label</option>
+    }
+</select>
+
+@code {
+    /// <summary>The key of a <see cref="MetaLeaderboard.Windows"/> entry.</summary>
+    [Parameter, EditorRequired] public string Value { get; set; } = MetaLeaderboard.DefaultWindow;
+    [Parameter] public EventCallback<string> ValueChanged { get; set; }
+}

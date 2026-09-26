@@ -9,3 +9,7 @@ public sealed record MetaAppearance(string Blade, string Display, string? Ratche
     /// <summary>The event date, parsed once; null when the post had none.</summary>
     public DateOnly? On { get; } = DateOnly.TryParseExact(Date, "yyyy-MM-dd", out var d) ? d : null;
 }
+
+/// <summary>A blade with its own page at /meta/{Slug} (wwwroot/data/meta/blade-pages.json, see meta/BeybladeMeta.Indexer/BladePages.cs).</summary>
+/// <param name="Image">The game's render of the blade; null for CX blades and blades the game does not have.</param>
+public sealed record MetaBladePage(string Slug, string Name, string? Image);
