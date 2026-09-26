@@ -1,0 +1,13 @@
+# Beydle
+
+> Beydle is a free daily Wordle-style guessing game for Beyblade X blades. Everyone gets the same hidden blade each day, with a new one at midnight Europe/Berlin time. It runs in the browser with no account or install.
+
+- Round 1: type any Beyblade X blade name (Takara Tomy and Hasbro names both work). Each guess shows how it compares with the hidden blade on type, spin direction, weight, product line, stock ratchet and bit, release year and anime owner. Guesses are unlimited, and a counter shows how many blades still fit the hints.
+- Round 2: after round 1 is solved, name a second blade from a silhouette that sharpens with each wrong guess.
+- Xtreme mode only accepts guesses that fit all hints so far.
+- Practice mode plays both rounds with random blades as often as you like, without affecting daily stats.
+- Streaks and statistics are kept in the player's browser. Results can be shared as text or an image.
+
+## Play
+
+- [Beydle](https://beydle.com/): the daily game, with practice mode on the same page
