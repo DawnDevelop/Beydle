@@ -1,6 +1,6 @@
 # Beydle
 
-A daily Wordle-style guessing game for Beyblade X blades, built with Blazor WebAssembly and hosted as a static site on GitHub Pages.
+A daily Wordle-style guessing game for Beyblade X blades, built with Blazor WebAssembly and hosted as a static site on Cloudflare Workers.
 
 One blade is chosen per day (midnight Europe/Berlin). Every guess shows how it compares with the hidden blade across type, spin direction, blade weight, product line, the stock ratchet and bit, release year and anime owner. Unlimited guesses. A counter shows how many blades still fit every hint so far, and after the solve the page compares the player with Beydle Bot, a greedy solver (see `Services/Deduction.cs`). Xtreme mode only accepts guesses that fit all hints so far; it can be switched on before the first guess and off at any time. Solving it unlocks round 2: a second, different blade shown as a silhouette that sharpens with every wrong guess. Results can be shared as text or as an image. Stats and today's guesses are kept in the browser's local storage. Seventeen hidden achievements (see `Services/Achievements.cs`) pop up Steam-style when found and are listed in the statistics dialog. A practice mode plays both rounds with random blades without touching the daily stats.
 
@@ -20,9 +20,12 @@ dotnet test
 
 ## Deploy
 
-Pushing to `main` runs `.github/workflows/deploy.yml`, which publishes the app and deploys it to GitHub Pages at `beydle.com`.
+Pushing to `main` triggers a Cloudflare Workers Build, which publishes the app and serves `output/wwwroot` as static assets at `beydle.com` (see `wrangler.jsonc`). `wwwroot/_headers` marks the fingerprinted `_framework` files as immutable.
 
-One-time setup in the GitHub repo: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+Build settings in the Cloudflare dashboard (Worker → Settings → Build):
+
+- Build command: `curl -sSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh && bash dotnet-install.sh --channel 10.0 --install-dir ./.dotnet && ./.dotnet/dotnet publish Beydle.csproj -c Release -o output`
+- Deploy command: `npx wrangler deploy`
 
 ## Tooling
 

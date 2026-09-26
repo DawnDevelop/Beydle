@@ -1,6 +1,7 @@
 {
   "name": "beydle",
   "compatibility_date": "2026-09-26",
+  "workers_dev": false,
   "assets": {
     "directory": "./output/wwwroot",
     "not_found_handling": "single-page-application"
