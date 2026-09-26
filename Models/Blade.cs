@@ -24,6 +24,8 @@ public sealed record Blade(
     public bool HasIntegratedRatchet => Ratchet == "INT";
     public string RatchetLabel => HasIntegratedRatchet ? "Integrated" : Ratchet;
     public string OwnerLabel => Owner ?? "None";
+    /// <summary>The stock combo as sold, e.g. "Dran Sword 3-60F"; an integrated ratchet is left out.</summary>
+    public string StockCombo => $"{Name} {(HasIntegratedRatchet ? "" : Ratchet)}{BitAbbr}";
 
     public bool Matches(string query)
     {

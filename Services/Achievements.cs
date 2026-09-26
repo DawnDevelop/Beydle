@@ -64,7 +64,7 @@ public static class Achievements
         var r1 = daily.Blade;
         var r2 = daily.Image;
 
-        if (r1.Won && r1.Guesses.Count == 1) yield return XtremeFinish;
+        if (daily.XtremeFinish) yield return XtremeFinish;
         if (r1.Won && r1.Guesses.Count >= StaminaGuesses) yield return StaminaType;
         if (r2.Won && r2.Guesses.Count == 1) yield return SharpEye;
         if (r2.Won && r1.Guesses.Count == 1 && r2.Guesses.Count == 1) yield return PerfectDay;
@@ -77,7 +77,7 @@ public static class Achievements
         if (r1.Guesses.Any(g => !g.IsCorrect && g.Cells.Count(c => c.Hit != Hit.Exact) == 1)) yield return PhotoFinish;
         if (r1.Won && r1.Answer.Spin == "Left") yield return CounterSpin;
         if (r1.Won && AnniversaryYears(r1.Answer, day) is not null) yield return ManyHappyReturns;
-        if (r1.Won && daily.Extreme) yield return ByTheBook;
+        if (r1.Won && daily.XtremeMode) yield return ByTheBook;
         if (r1.Won && r1.Guesses.Count < Deduction.BotGuesses(pool, r1.Answer)) yield return OutsmartedTheBot;
     }
 
@@ -102,7 +102,7 @@ public static class Achievements
     /// <summary>Whole years since the blade's release when today is its anniversary; otherwise null.</summary>
     public static int? AnniversaryYears(Blade blade, DateOnly today)
     {
-        if (!DateOnly.TryParseExact(blade.Released, "yyyy-MM-dd", out var released)) return null;
+        if (!DateOnly.TryParseExact(blade.Released, DailyPicker.DayFormat, out var released)) return null;
         if (released.Month != today.Month || released.Day != today.Day) return null;
         var years = today.Year - released.Year;
         return years > 0 ? years : null;

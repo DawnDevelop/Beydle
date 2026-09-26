@@ -18,7 +18,7 @@ public static class Deduction
     private static bool SameHints(GuessResult a, GuessResult b)
     {
         for (var i = 0; i < a.Cells.Length; i++)
-            if (a.Cells[i].Hit != b.Cells[i].Hit || a.Cells[i].Direction != b.Cells[i].Direction) return false;
+            if (!a.Cells[i].SameHint(b.Cells[i])) return false;
         return true;
     }
 
@@ -46,7 +46,7 @@ public static class Deduction
             for (var i = 0; i < g.Cells.Length; i++)
             {
                 var hint = g.Cells[i];
-                if (would.Cells[i].Hit != hint.Hit || would.Cells[i].Direction != hint.Direction) return Describe(hint, g.Guess);
+                if (!would.Cells[i].SameHint(hint)) return Describe(hint, g.Guess);
             }
         }
         return null;

@@ -8,6 +8,17 @@ public enum Direction { None, Higher, Lower }
 public sealed record Cell(string Label, string Value, Hit Hit, Direction Direction = Direction.None)
 {
     public string Emoji => Hit switch { Hit.Exact => "🟩", Hit.Partial => "🟨", _ => "⬛" };
+
+    /// <summary>The hint in words, for the cell's tooltip.</summary>
+    public string Description => Hit switch
+    {
+        Hit.Exact => "exact",
+        Hit.Partial => Direction == Direction.None ? "close" : Direction == Direction.Higher ? "close, answer is higher" : "close, answer is lower",
+        _ => Direction == Direction.None ? "no match" : Direction == Direction.Higher ? "answer is higher" : "answer is lower",
+    };
+
+    /// <summary>True when both cells give the player the same hint (colour and arrow).</summary>
+    public bool SameHint(Cell other) => Hit == other.Hit && Direction == other.Direction;
 }
 
 public sealed record GuessResult(Blade Guess, Cell[] Cells, bool IsCorrect)

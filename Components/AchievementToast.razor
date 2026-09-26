@@ -1,0 +1,18 @@
+@if (Achievement is not null)
+{
+    <div class="toast" role="status" aria-live="polite" @key="Achievement.Id">
+        <span class="toast-icon" aria-hidden="true">@Achievement.Icon</span>
+        <span class="toast-text">
+            <span class="toast-kicker">Achievement unlocked</span>
+            <span class="toast-title">@Achievement.Title</span>
+        </span>
+    </div>
+}
+
+@code {
+    /// <summary>Matches the .toast animation length in app.css.</summary>
+    public const int DurationMs = 5400;
+
+    /// <summary>The achievement on show; null shows nothing.</summary>
+    [Parameter] public Achievement? Achievement { get; set; }
+}

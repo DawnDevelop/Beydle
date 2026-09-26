@@ -1,0 +1,52 @@
+<Modal OnClose="OnClose">
+    <h2 id="dialog-title">Statistics</h2>
+    <div class="stats-grid">
+        <div><b>@Stats.Played</b><span>Played</span></div>
+        <div><b>@(Stats.Won == 0 ? "–" : StatsTracker.AverageGuesses(Stats).ToString("0.0"))</b><span>Avg guesses</span></div>
+        <div><b>🔥 @StatsTracker.CurrentStreak(Stats, Today)</b><span>Streak</span></div>
+        <div><b>@Stats.MaxStreak</b><span>Best streak</span></div>
+    </div>
+    @if (Stats.Distribution.Count > 0)
+    {
+        var max = Stats.Distribution.Values.Max();
+        <h3>Round 1 guess distribution</h3>
+        <div class="dist">
+            @foreach (var kv in Stats.Distribution.OrderBy(k => DistOrder(k.Key)))
+            {
+                <div class="dist-row">
+                    <span class="k">@kv.Key</span>
+                    <span class="v" style="width:@(Math.Max(8, 100 * kv.Value / max))%">@kv.Value</span>
+                </div>
+            }
+        </div>
+    }
+    <p class="muted">Daily mode only. A day counts as played once you make a guess. Practice rounds are not counted.</p>
+    <h3>Achievements · @Unlocked.Count / @Achievements.All.Count</h3>
+    <ul class="achievements">
+        @foreach (var a in Achievements.All)
+        {
+            var unlocked = Unlocked.TryGetValue(a.Id, out var when);
+            <li class="ach @(unlocked ? "unlocked" : "locked")">
+                <span class="ach-icon" aria-hidden="true">@(unlocked ? a.Icon : "🔒")</span>
+                <span class="ach-text">
+                    <span class="ach-title">@a.Title</span>
+                    <span class="ach-desc">@(unlocked ? a.Description : "Hidden until unlocked.")</span>
+                </span>
+                @if (unlocked)
+                {
+                    <span class="ach-date">@when</span>
+                }
+            </li>
+        }
+    </ul>
+</Modal>
+
+@code {
+    [Parameter, EditorRequired] public Stats Stats { get; set; } = null!;
+    /// <summary>Achievement id to the day it was unlocked.</summary>
+    [Parameter, EditorRequired] public IReadOnlyDictionary<string, string> Unlocked { get; set; } = null!;
+    [Parameter] public DateOnly Today { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private static int DistOrder(string key) => key == "7+" ? 7 : int.Parse(key);
+}

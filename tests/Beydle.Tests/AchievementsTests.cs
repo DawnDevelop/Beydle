@@ -134,7 +134,7 @@ public class AchievementsTests
     {
         var lefty = Make("lefty", "2024-05-02") with { Spin = "Left" };
         IReadOnlyList<Blade> pool = [.. Pool, lefty];
-        var g = new GameSession(lefty, HellsScythe) { Extreme = true };
+        var g = new GameSession(lefty, HellsScythe) { XtremeMode = true };
         g.Submit(KnightShield);
         var anniversary = new DateOnly(2026, 5, 2);
         Assert.DoesNotContain(Achievements.CounterSpin, Earned(g, day: anniversary, pool: pool));

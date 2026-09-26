@@ -6,6 +6,8 @@ namespace Beydle.Services;
 public static class DailyPicker
 {
     public static readonly DateOnly Epoch = new(2026, 1, 1);
+    /// <summary>How days are written in saved state, the schedule and stats events.</summary>
+    public const string DayFormat = "yyyy-MM-dd";
     private static readonly TimeZoneInfo Berlin = ResolveBerlin();
 
     public static DateOnly Today() => Today(DateTime.UtcNow);
@@ -13,6 +15,8 @@ public static class DailyPicker
     public static DateOnly Today(DateTime utcNow) => DateOnly.FromDateTime(TimeZoneInfo.ConvertTimeFromUtc(utcNow, Berlin));
 
     public static int DayNumber(DateOnly day) => day.DayNumber - Epoch.DayNumber;
+
+    public static string DayKey(DateOnly day) => day.ToString(DayFormat);
 
     public static TimeSpan UntilNextDay() => UntilNextDay(DateTime.UtcNow);
 
@@ -32,7 +36,7 @@ public static class DailyPicker
     /// </summary>
     public static (Blade First, Blade Image) PickDay(IReadOnlyList<Blade> blades, DateOnly day, IReadOnlyDictionary<string, string[]>? schedule)
     {
-        if (schedule is not null && schedule.TryGetValue(day.ToString("yyyy-MM-dd"), out var hashes) && hashes.Length == 2)
+        if (schedule is not null && schedule.TryGetValue(DayKey(day), out var hashes) && hashes.Length == 2)
         {
             Blade? first = null, image = null;
             foreach (var b in blades)
@@ -56,9 +60,7 @@ public static class DailyPicker
         if (count == 1) return blades[0];
         var n = DayNumber(day);
         if (count == 2) return blades[Math.Abs(n) % 2]; // alternate; the shuffle's boundary fix assumes 3+ blades
-        var cycle = (int)Math.Floor(n / (double)count);
-        var pos = n - cycle * count;
-        return blades[Permutation(count, cycle)[pos]];
+        return AtPosition(blades, n);
     }
 
     /// <summary>
@@ -74,15 +76,22 @@ public static class DailyPicker
         var n = DayNumber(day) + ImageOffset;
         for (var attempt = 0; attempt < count; attempt++, n++)
         {
-            var cycle = (int)Math.Floor(n / (double)count);
-            var pos = n - cycle * count;
-            var candidate = blades[Permutation(count, cycle)[pos]];
+            var candidate = AtPosition(blades, n);
             if (candidate.Id != first.Id) return candidate;
         }
         return first;
     }
 
     private const int ImageOffset = 7919;
+
+    /// <summary>The blade at position <paramref name="n"/> of the endless sequence of shuffled cycles.</summary>
+    private static Blade AtPosition(IReadOnlyList<Blade> blades, int n)
+    {
+        var count = blades.Count;
+        var cycle = (int)Math.Floor(n / (double)count);
+        var pos = n - cycle * count;
+        return blades[Permutation(count, cycle)[pos]];
+    }
 
     private static int[] Permutation(int count, int cycle)
     {

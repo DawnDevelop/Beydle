@@ -14,7 +14,7 @@ public static class ScheduleHash
 
     public static string For(DateOnly day, string bladeId)
     {
-        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes($"{Salt}|{day:yyyy-MM-dd}|{bladeId}"));
+        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes($"{Salt}|{DailyPicker.DayKey(day)}|{bladeId}"));
         return Convert.ToHexStringLower(bytes)[..32];
     }
 }

@@ -1,0 +1,19 @@
+<Modal CloseLabel="Got it" OnClose="OnClose">
+    <h2 id="dialog-title">How to play</h2>
+    <p><strong>Round 1.</strong> One Beyblade X blade is chosen each day. Type any blade name and submit. Each guess shows how its properties compare with the hidden blade.</p>
+    <ul class="legend">
+        <li><span class="swatch exact"></span><span><strong>Green</strong> – exact match.</span></li>
+        <li><span class="swatch partial"></span><span><strong>Yellow</strong> – close: weight within 1.5 g, a ratchet sharing its blade count or height, or a bit of the same type.</span></li>
+        <li><span class="swatch miss"></span><span><strong>Grey</strong> – no match.</span></li>
+        <li><span class="swatch arrow-demo">▲</span><span>Arrows on numbers show whether the answer is <strong>higher</strong> or <strong>lower</strong>.</span></li>
+    </ul>
+    <p>Under the guess box you can see how many blades still fit every hint so far; each row shows how many were left after it. Once you solve it, Beydle Bot shows how many guesses it would have needed. The bot always plays the blade that narrows the field the most.</p>
+    <p><strong>Round 2.</strong> Once round 1 is solved, a second, different blade appears as a silhouette. Name it. The silhouette gets a little clearer with each wrong guess, colour shows after two misses, and the picture is at its sharpest after seven.</p>
+    <p><strong>Xtreme mode</strong> only accepts round 1 guesses that fit all the hints so far. It can be switched on only before your first guess, and off at any time during round 1. Results shared from Xtreme mode carry a *.</p>
+    <p class="muted">Weight is the blade alone. Line is the product series the blade belongs to (BX, UX or CX). Ratchet and bit are the stock combo the blade first shipped with. Year is the first Takara Tomy release. Owner is the anime character who uses the blade.</p>
+    <p class="muted"><strong>Practice</strong> mode plays both rounds with random blades as often as you like and does not count toward your stats.</p>
+</Modal>
+
+@code {
+    [Parameter] public EventCallback OnClose { get; set; }
+}

@@ -1,0 +1,179 @@
+@implements IDisposable
+
+@* The blade-name combobox and the hint line under it. Owns what is typed; the page decides what a guess does. *@
+@* Hidden, not removed, while the winning row turns: nothing that looks like a loading box, and the board does not jump. *@
+<section class="guess-box @(Revealing ? "revealing" : "")">
+    <div class="search @(suggestions.Count > 0 ? "open" : "")">
+        <input @ref="inputRef"
+               class="search-input"
+               role="combobox"
+               aria-label="@(RoundOneShown ? "Name the blade in the picture" : "Blade name")"
+               disabled="@Revealing"
+               aria-autocomplete="list"
+               aria-expanded="@(suggestions.Count > 0 ? "true" : "false")"
+               aria-controls="suggestions"
+               aria-activedescendant="@(suggestions.Count > 0 ? $"suggestion-{highlighted}" : null)"
+               placeholder="@(Revealing ? "" : RoundOneShown ? "Name the blade in the picture…" : "Type a blade name…")"
+               autocomplete="off"
+               spellcheck="false"
+               value="@query"
+               @oninput="OnInput"
+               @onkeydown="OnKeyDown"
+               @onfocus="() => UpdateSuggestions(query)"
+               @onblur="OnBlur" />
+        @if (suggestions.Count > 0)
+        {
+            <ul class="suggestions" id="suggestions" role="listbox" aria-label="Matching blades">
+                @for (var i = 0; i < suggestions.Count; i++)
+                {
+                    var s = suggestions[i];
+                    var idx = i;
+                    <li id="suggestion-@idx"
+                        role="option"
+                        aria-selected="@(idx == highlighted ? "true" : "false")"
+                        class="@(idx == highlighted ? "active" : "")"
+                        @onmousedown:preventDefault
+                        @onmousedown="() => Submit(s)">
+                        @if (!RoundOneShown)
+                        {
+                            <img class="s-img" src="@s.Image" alt="" loading="lazy" />
+                        }
+                        <span class="s-text">
+                            <span class="s-name">@s.Name</span>
+                            <span class="s-sub">@s.Code@(s.Aliases.Length > 0 ? " · " + string.Join(", ", s.Aliases) : "")</span>
+                        </span>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+    @if (Revealing)
+    {
+        <p class="hint-text">…</p>
+    }
+    else if (EggReply is not null)
+    {
+        <p class="hint-text egg" aria-live="polite">@EggReply</p>
+    }
+    else if (RoundOneShown)
+    {
+        @if (Game.Image.Guesses.Count > 0)
+        {
+            <ul class="chips" aria-label="Wrong guesses">
+                @foreach (var g in Enumerable.Reverse(Game.Image.Guesses))
+                {
+                    <li class="chip" @key="g.Id">@g.Name</li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p class="hint-text">Suggestions show names only in this round. Unlimited guesses.</p>
+        }
+    }
+    else
+    {
+        var n = Game.Blade.Guesses.Count;
+        @if (n == 0)
+        {
+            <p class="hint-text">@(Game.XtremeMode ? "Xtreme mode: every guess must fit all the hints so far." : "Unlimited guesses. Takara Tomy and Hasbro names both work.")</p>
+        }
+        else
+        {
+            var possible = Left[^1];
+            @* Keyed so the count fades in again after each guess, once the new row's cards have turned. *@
+            <p class="hint-text">@Text.Count(n, "guess", "guesses") so far · <span class="left-count" @key="n"><strong>@possible</strong> @Text.Plural(possible, "blade fits", "blades fit") your hints</span></p>
+        }
+    }
+</section>
+
+@code {
+    /// <summary>What is in the box after each keystroke, and whether any blade matches it.</summary>
+    public readonly record struct Typed(string Text, bool HasMatches);
+
+    [Parameter, EditorRequired] public GameSession Game { get; set; } = null!;
+    [Parameter, EditorRequired] public IReadOnlyList<Blade> Pool { get; set; } = null!;
+    /// <summary>Blades still possible after each round-1 guess.</summary>
+    [Parameter, EditorRequired] public int[] Left { get; set; } = null!;
+    /// <summary>True from a winning round-1 guess until its last card has flipped.</summary>
+    [Parameter] public bool Revealing { get; set; }
+    /// <summary>A reply shown in place of the hint (battle calls, Xtreme-mode refusals).</summary>
+    [Parameter] public string? EggReply { get; set; }
+    [Parameter] public EventCallback<Blade> OnSubmit { get; set; }
+    [Parameter] public EventCallback<Typed> OnTyped { get; set; }
+
+    private string query = "";
+    private List<Blade> suggestions = [];
+    private int highlighted;
+    private ElementReference inputRef;
+    private bool disposed;
+
+    private bool RoundOneShown => Game.Blade.Won && !Revealing;
+
+    public ValueTask FocusAsync() => inputRef.FocusAsync();
+
+    public void Clear()
+    {
+        query = "";
+        suggestions = [];
+    }
+
+    private async Task OnInput(ChangeEventArgs e)
+    {
+        query = e.Value?.ToString() ?? "";
+        UpdateSuggestions(query);
+        await OnTyped.InvokeAsync(new Typed(query, suggestions.Count > 0));
+    }
+
+    private void UpdateSuggestions(string q)
+    {
+        q = q.Trim();
+        if (q.Length == 0)
+        {
+            suggestions = [];
+            return;
+        }
+        var guessed = Game.GuessedIds.ToHashSet();
+        suggestions = Pool
+            .Where(b => !guessed.Contains(b.Id) && b.Matches(q))
+            .OrderBy(b => b.Name.StartsWith(q, StringComparison.OrdinalIgnoreCase) ? 0 : 1)
+            .ThenBy(b => b.Name)
+            .Take(6)
+            .ToList();
+        highlighted = 0;
+    }
+
+    private async Task OnKeyDown(KeyboardEventArgs e)
+    {
+        if (suggestions.Count == 0) return;
+        switch (e.Key)
+        {
+            case "ArrowDown": highlighted = (highlighted + 1) % suggestions.Count; break;
+            case "ArrowUp": highlighted = (highlighted - 1 + suggestions.Count) % suggestions.Count; break;
+            case "Enter": await Submit(suggestions[highlighted]); break;
+            case "Escape": suggestions = []; break;
+        }
+    }
+
+    private void OnBlur()
+    {
+        // Delay so a click on a suggestion (mousedown) is handled first.
+        _ = ClearSuggestionsLater();
+    }
+
+    private async Task ClearSuggestionsLater()
+    {
+        await Task.Delay(150);
+        if (disposed) return;
+        suggestions = [];
+        StateHasChanged();
+    }
+
+    private async Task Submit(Blade blade)
+    {
+        Clear();
+        await OnSubmit.InvokeAsync(blade);
+    }
+
+    public void Dispose() => disposed = true;
+}

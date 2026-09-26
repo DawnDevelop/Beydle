@@ -105,7 +105,7 @@ public class GameSessionTests
     [Fact]
     public void ExtremeModeRefusesGuessesThatContradictTheHints()
     {
-        var g = new GameSession(A, B) { Extreme = true };
+        var g = new GameSession(A, B) { XtremeMode = true };
         Assert.Null(g.Rejects(C)); // nothing to contradict yet
         g.Submit(B); // Stamina, so the answer is not Stamina
         var staminaAgain = Make("d", "Stamina");
@@ -123,7 +123,7 @@ public class GameSessionTests
         easy.Submit(B);
         Assert.Null(easy.Rejects(Make("d", "Stamina")));
 
-        var extreme = new GameSession(A, B) { Extreme = true };
+        var extreme = new GameSession(A, B) { XtremeMode = true };
         extreme.Submit(A);
         Assert.Null(extreme.Rejects(C));
         Assert.True(extreme.Submit(C));
@@ -132,11 +132,11 @@ public class GameSessionTests
     [Fact]
     public void SwitchingExtremeModeOffMidRoundLiftsTheRule()
     {
-        var g = new GameSession(A, B) { Extreme = true };
+        var g = new GameSession(A, B) { XtremeMode = true };
         g.Submit(B);
         var staminaAgain = Make("d", "Stamina");
         Assert.NotNull(g.Rejects(staminaAgain));
-        g.Extreme = false;
+        g.XtremeMode = false;
         Assert.Null(g.Rejects(staminaAgain));
         Assert.True(g.Submit(staminaAgain));
     }
@@ -144,11 +144,11 @@ public class GameSessionTests
     [Fact]
     public void ShareTextMarksExtremeMode()
     {
-        var g = new GameSession(A, B) { Extreme = true };
+        var g = new GameSession(A, B) { XtremeMode = true };
         g.Submit(A);
         g.Submit(B);
         Assert.StartsWith("Beydle #5 – Blade 1/∞* · Image 1/∞", g.ShareText("Beydle #5", "u"));
-        g.Extreme = false;
+        g.XtremeMode = false;
         Assert.StartsWith("Beydle #5 – Blade 1/∞ · Image 1/∞", g.ShareText("Beydle #5", "u"));
     }
 }
@@ -250,8 +250,8 @@ public class StorageParseTests
     public void StateFromBeforeExtremeModeLoadsWithExtremeModeOff()
     {
         var s = StorageService.Parse("{\"day\":\"2026-09-19\",\"guesses\":[\"dran-sword\"],\"stats\":{}}");
-        Assert.False(s.ExtremeMode);
-        Assert.False(s.DayExtreme);
+        Assert.False(s.XtremeMode);
+        Assert.False(s.DayXtreme);
     }
 
     [Fact]

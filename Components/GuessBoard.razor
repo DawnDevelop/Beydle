@@ -1,0 +1,57 @@
+@* Round 1's guesses, newest first. The newest row's cards turn over (see .row.fresh in app.css). *@
+@if (Guesses.Count > 0)
+{
+    <section class="board" aria-label="Round 1 guesses">
+        @if (ShowTitle)
+        {
+            <h3 class="board-title">Round 1 guesses</h3>
+        }
+        <div class="board-scroll">
+            <div class="row head">
+                <div class="cell name">Blade</div>
+                @foreach (var label in GuessResult.Labels)
+                {
+                    <div class="cell">@label</div>
+                }
+            </div>
+            @for (var i = Guesses.Count - 1; i >= 0; i--)
+            {
+                var g = Guesses[i];
+                <div class="row @(g == Guesses[^1] ? "fresh" : "")" @key="g.Guess.Id">
+                    <div class="cell name @(g.IsCorrect && !Revealing ? "exact" : "")">
+                        <span class="n">@g.Guess.Name</span>
+                        <span class="c">@g.Guess.Code<span class="left-count" title="Blades that still fit the hints after this guess">@(g.IsCorrect ? "" : $" · {Left[i]} left")</span></span>
+                    </div>
+                    @foreach (var c in g.Cells)
+                    {
+                        <div class="cell flip-card @c.Hit.ToString().ToLower()" title="@c.Label: @c.Description">
+                            <div class="card-turn">
+                                <div class="card-face card-cover" aria-hidden="true"></div>
+                                <div class="card-face card-result">
+                                    <span>@c.Value</span>
+                                    @if (c.Direction == Direction.Higher)
+                                    {
+                                        <i class="arrow" title="The answer is higher">▲</i>
+                                    }
+                                    else if (c.Direction == Direction.Lower)
+                                    {
+                                        <i class="arrow" title="The answer is lower">▼</i>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </section>
+}
+
+@code {
+    [Parameter, EditorRequired] public IReadOnlyList<GuessResult> Guesses { get; set; } = null!;
+    /// <summary>Blades still possible after each guess.</summary>
+    [Parameter, EditorRequired] public int[] Left { get; set; } = null!;
+    /// <summary>While the winning row turns, its name cell is not yet marked as solved.</summary>
+    [Parameter] public bool Revealing { get; set; }
+    [Parameter] public bool ShowTitle { get; set; }
+}

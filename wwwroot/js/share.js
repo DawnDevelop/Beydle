@@ -1,5 +1,5 @@
 // Draws the result card as a PNG and hands it to the share sheet (touch devices), the clipboard, or a download.
-// Called from Home.razor; returns "shared", "copied", "saved", "cancelled" or "failed". Everything up to the
+// Called from ShareService; returns "shared", "copied", "saved", "cancelled" or "failed". Everything up to the
 // share or clipboard call is synchronous so it still counts as part of the player's click (Safari insists).
 window.beydleShareImage = async function (card) {
     const colors = { bg: "#0b0d14", panel: "#161a27", text: "#e8ebf5", muted: "#8b93ad", exact: "#22b573", partial: "#e3b341", miss: "#2a3043", accent: "#5b8cff" };
@@ -33,7 +33,7 @@ window.beydleShareImage = async function (card) {
     ctx.fillStyle = colors.muted;
     ctx.font = font(600, 16);
     ctx.fillText(card.summary, pad, y + 44);
-    if (card.extreme) {
+    if (card.xtremeMode) {
         ctx.font = font(700, 13);
         const label = "XTREME MODE", w = ctx.measureText(label).width + 20;
         rounded(width - pad - w, y + 6, w, 26, 13, "rgba(227, 179, 65, .16)");

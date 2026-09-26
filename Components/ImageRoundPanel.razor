@@ -1,0 +1,47 @@
+@inject NavigationManager Nav
+
+@* Round 2: the obscured picture while it is played, the named blade and ChildContent (the result actions) once solved. *@
+<section class="image-round card" aria-label="Round 2">
+    @if (!Game.Image.Won)
+    {
+        var stage = Game.Image.Stage;
+        <h2 class="round-title">Round 2 · Which blade is this?</h2>
+        <div class="reveal-frame @(Missing ? "miss" : "")">
+            <div class="reveal-shape" style="--blade-mask: url('@Nav.ToAbsoluteUri(Game.Image.Answer.Image)')">
+                <img class="reveal-img stage-@stage" src="@Game.Image.Answer.Image" alt="Hidden blade, obscured" />
+            </div>
+        </div>
+        <p class="reveal-note" aria-live="polite">@(stage < 2 ? "Silhouette only. Each wrong guess sharpens the picture a little." : stage >= ImageRound.MaxStage ? "As clear as it gets." : "A little sharper.")</p>
+        @* Fetch every render at once so the network log does not single out the answer. *@
+        <div class="prefetch" aria-hidden="true">
+            @foreach (var b in Pool)
+            {
+                <img src="@b.Image" alt="" loading="eager" decoding="async" />
+            }
+        </div>
+    }
+    else
+    {
+        var img = Game.Image.Answer;
+        <p class="result-title">Round 2 cleared in <strong>@Game.Image.Guesses.Count</strong> @Text.Plural(Game.Image.Guesses.Count, "guess", "guesses")!</p>
+        <div class="reveal-frame solved">
+            <img class="reveal-img" src="@img.Image" alt="" />
+        </div>
+        <div class="reveal-head">
+            <span class="badge line-@img.Line.ToLower()">@img.Code</span>
+            <h2>@img.Name</h2>
+            <span class="stock">@img.Type · @img.Spin spin · @img.StockCombo</span>
+        </div>
+        <div class="result-actions">
+            @ChildContent
+        </div>
+    }
+</section>
+
+@code {
+    [Parameter, EditorRequired] public GameSession Game { get; set; } = null!;
+    [Parameter, EditorRequired] public IReadOnlyList<Blade> Pool { get; set; } = null!;
+    /// <summary>True while the miss animation plays (see .reveal-frame.miss in app.css).</summary>
+    [Parameter] public bool Missing { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

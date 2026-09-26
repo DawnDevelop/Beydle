@@ -1,0 +1,17 @@
+<div class="extreme-row">
+    <button class="extreme-toggle @(Game.XtremeMode ? "on" : "")" role="switch" aria-checked="@(Game.XtremeMode ? "true" : "false")"
+            disabled="@Game.XtremeModeLocked" title="@Title" @onclick="OnToggle">
+        <span class="knob" aria-hidden="true"></span> Xtreme mode@(Game.XtremeModeLocked ? " 🔒" : "")
+    </button>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public GameSession Game { get; set; } = null!;
+    [Parameter] public EventCallback OnToggle { get; set; }
+
+    private string Title =>
+        Game.Blade.Won ? "Round 1 is over"
+        : Game.XtremeModeLocked ? "Xtreme mode can only be switched on before your first guess"
+        : Game.XtremeMode && Game.Blade.Guesses.Count > 0 ? "Switch Xtreme mode off. It can't be switched back on for this round."
+        : "Every guess must fit all the hints so far";
+}

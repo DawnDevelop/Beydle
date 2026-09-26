@@ -1,0 +1,27 @@
+@* A dialog over a backdrop. Clicking the backdrop, pressing Escape or the button closes it. The content must
+   carry the heading with id="dialog-title". *@
+<div class="modal-backdrop" @onclick="OnClose" @onkeydown="OnKeyDown">
+    <div class="modal card" role="dialog" aria-modal="true" aria-labelledby="dialog-title" tabindex="-1" @ref="dialogRef" @onclick:stopPropagation>
+        @ChildContent
+        <button class="btn" @onclick="OnClose">@CloseLabel</button>
+    </div>
+</div>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string CloseLabel { get; set; } = "Close";
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private ElementReference dialogRef;
+
+    // Focus starts inside the dialog so key presses, Escape included, reach it rather than the button that opened it.
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender) await dialogRef.FocusAsync();
+    }
+
+    private async Task OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape") await OnClose.InvokeAsync();
+    }
+}

@@ -1,0 +1,74 @@
+@* The solved round 1: a compact strip while round 2 is played, the full reveal once the game is complete. *@
+@{
+    var answer = Game.Blade.Answer;
+    var xtremeFinish = Game.XtremeFinish;
+    var anniversary = Achievements.AnniversaryYears(answer, Today);
+}
+@if (!Game.Image.Won)
+{
+    <section class="round-strip card @(xtremeFinish ? "xtreme" : "")" aria-label="Round 1 result">
+        <img class="strip-img" src="@answer.Image" alt="" />
+        <div class="strip-text">
+            <span class="strip-title">@(xtremeFinish ? "⚡ Xtreme Finish! Round 1 cleared in one guess" : $"Round 1 cleared in {Game.Blade.Guesses.Count} guesses")</span>
+            <span class="strip-sub"><span class="badge line-@answer.Line.ToLower()">@answer.Code</span> @answer.StockCombo</span>
+            @if (anniversary is int y)
+            {
+                <span class="anniversary">🎂 Released exactly @Text.Count(y, "year", "years") ago today</span>
+            }
+            <span class="analysis">@Summary</span>
+        </div>
+    </section>
+}
+else
+{
+    <section class="result card compact @(xtremeFinish ? "xtreme" : "")" aria-label="Round 1 result">
+        @if (xtremeFinish)
+        {
+            <p class="result-title"><strong>⚡ Xtreme Finish!</strong> Round 1 cleared in one guess!</p>
+        }
+        else
+        {
+            <p class="result-title">Round 1 cleared in <strong>@Game.Blade.Guesses.Count</strong> guesses!</p>
+        }
+        @if (anniversary is int y)
+        {
+            <p class="anniversary">🎂 Released exactly @Text.Count(y, "year", "years") ago today</p>
+        }
+        <p class="analysis">@Summary</p>
+        <div class="reveal">
+            <img class="reveal-full" src="@answer.Image" alt="" />
+            <div class="reveal-head">
+                <span class="badge line-@answer.Line.ToLower()">@answer.Code</span>
+                <h2>@answer.Name</h2>
+                <span class="stock">@answer.StockCombo</span>
+            </div>
+            <dl class="reveal-grid">
+                <div><dt>Type</dt><dd>@answer.Type</dd></div>
+                <div><dt>Spin</dt><dd>@answer.Spin</dd></div>
+                <div><dt>Weight</dt><dd>@answer.Weight.ToString("0.0") g</dd></div>
+                <div><dt>Ratchet</dt><dd>@answer.RatchetLabel</dd></div>
+                <div><dt>Bit</dt><dd>@answer.Bit</dd></div>
+                <div><dt>Released</dt><dd>@answer.Year</dd></div>
+                <div><dt>Owner</dt><dd>@answer.OwnerLabel</dd></div>
+                <div class="stat-bars">
+                    <dt>ATK / DEF / STA</dt>
+                    <dd>
+                        <span class="bar"><i style="width:@(answer.Atk)%"></i><b>@answer.Atk</b></span>
+                        <span class="bar"><i style="width:@(answer.Def)%"></i><b>@answer.Def</b></span>
+                        <span class="bar"><i style="width:@(answer.Sta)%"></i><b>@answer.Sta</b></span>
+                    </dd>
+                </div>
+            </dl>
+        </div>
+    </section>
+}
+
+@code {
+    [Parameter, EditorRequired] public GameSession Game { get; set; } = null!;
+    [Parameter, EditorRequired] public IReadOnlyList<Blade> Pool { get; set; } = null!;
+    [Parameter] public DateOnly Today { get; set; }
+    /// <summary>Blades still possible after each round-1 guess.</summary>
+    [Parameter, EditorRequired] public int[] Left { get; set; } = null!;
+
+    private string Summary => RoundSummary.Describe(Pool, Game.Blade.Guesses, Left, Game.Blade.Answer);
+}
